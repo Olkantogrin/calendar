@@ -157,6 +157,7 @@ namespace MyForm
 
             this.FormClosed += AppointmentForm_FormClosed;
 
+
         }
 
         private void AppointmentForm_FormClosed(object sender, FormClosedEventArgs e)
