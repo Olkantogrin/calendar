@@ -102,10 +102,39 @@ namespace MyForm
 
             // Aktualisieren des ausgewählten Datums, falls erforderlich
             selectedDate = monthCalendar.SelectionStart;
- 
-            //TODO: Wenn das hier unten false ist, dann müssen für dengegebenen Monat und das Jahr, den der Kalender gerade hat, alle Termine ausgelesen werden, dann den Kalender nue bauen.
-            MessageBox.Show((!((AppointmentForm)sender).AddToBoldedDates).ToString());
-            
+
+            //TODO Hier eben alle Daten anzeigen für Monat und Jahr, welche in der DB sind. 
+            if (((AppointmentForm)sender).AddToBoldedDates) {
+
+                // Ausgewähltes Startdatum
+                DateTime selectedDate = monthCalendar.SelectionStart;
+
+                // Monat und Jahr auslesen
+                string selectedMonth = selectedDate.Month.ToString("D2");
+                string selectedYear = selectedDate.Year.ToString("D4");
+
+                // Ausgabe
+                MessageBox.Show($"Ausgewählter Monat: {selectedMonth}, Jahr: {selectedYear}");
+
+                ////
+
+                List<Date> datelist = new List<Date>();
+                //datelist.Add(d);
+                Span span = new Span();
+
+                List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(datelist);
+
+                //foreach (DateTime selectedDate in selectedDates)
+                //{
+                    //monthCalendar.AddBoldedDate(selectedDate);
+                //}
+
+                monthCalendar.UpdateBoldedDates();
+                monthCalendar.Invalidate();
+
+                ////
+            }
+
             if (!((AppointmentForm)sender).AddToBoldedDates)
             {
                 AppointmentForm form = sender as AppointmentForm;
@@ -122,8 +151,6 @@ namespace MyForm
                     string startDay = form.StartDate.ToString();
                     
                     string endDay = form.EndDate.ToString();
-
-                    //TODO: Wenn startDay oder endDay nicht der aktuelle Tag sind: MessageBox.Show("Wenn startDay oder endDay nicht der aktuelle Tag sind: Bitte die Kalender benutzen.");
 
                     TimeSpan start = form.StartTime;
                     string startHour = start.ToString().Substring(0, 5);

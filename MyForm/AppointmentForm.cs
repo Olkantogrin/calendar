@@ -32,8 +32,10 @@ namespace MyForm
         }
 
         public bool AddToBoldedDates { get { return checkBoxAddToBoldedDates.Checked; } }
-        private CheckBox checkBoxAddToBoldedDates;
 
+        private bool datePickerSelected = false;
+
+        private CheckBox checkBoxAddToBoldedDates;
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
@@ -155,8 +157,25 @@ namespace MyForm
             };
             Controls.Add(dateTimePickerEnd);
 
+            dateTimePickerStart.ValueChanged += DatePicker_ValueChanged;
+            dateTimePickerEnd.ValueChanged += DatePicker_ValueChanged;
+
             this.FormClosed += AppointmentForm_FormClosed;
 
+
+        }
+
+        private void DatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            // Überprüfen, ob beide Datepicker ausgewählt wurden
+            if (dateTimePickerStart.Value != null && dateTimePickerEnd.Value != null)
+            {
+                datePickerSelected = true;
+            }
+            else
+            {
+                datePickerSelected = false;
+            }
 
         }
 
@@ -176,6 +195,14 @@ namespace MyForm
 
         private void AppointmentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+
+            if (!datePickerSelected && !checkBoxAddToBoldedDates.Checked)
+            {
+                MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
+                e.Cancel = true; // Verhindert das Schließen des Formulars
+            }
+            else { 
+
             Entry entry = Entry.Instance;
             isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
 
@@ -193,7 +220,7 @@ namespace MyForm
             else {
                 SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
             }
-          
+            }
         }
 
     }
