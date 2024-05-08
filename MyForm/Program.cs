@@ -103,36 +103,37 @@ namespace MyForm
             // Aktualisieren des ausgewählten Datums, falls erforderlich
             selectedDate = monthCalendar.SelectionStart;
 
-            //TODO Hier eben alle Daten anzeigen für Monat und Jahr, welche in der DB sind. 
+            //TODO Hier eben alle Daten anzeigen für Monat und Jahr, welche in der DB sind. Dies sollte gestestet werden.
             if (((AppointmentForm)sender).AddToBoldedDates) {
 
                 // Ausgewähltes Startdatum
                 DateTime selectedDate = monthCalendar.SelectionStart;
 
                 // Monat und Jahr auslesen
-                string selectedMonth = selectedDate.Month.ToString("D2");
-                string selectedYear = selectedDate.Year.ToString("D4");
+                int selectedMonth = selectedDate.Month;
+                int selectedYear = selectedDate.Year;
 
-                // Ausgabe
-                MessageBox.Show($"Ausgewählter Monat: {selectedMonth}, Jahr: {selectedYear}");
+                DateDao dateDao = new DateDao();
 
-                ////
+                List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(selectedMonth, selectedYear);
 
                 List<Date> datelist = new List<Date>();
-                //datelist.Add(d);
                 Span span = new Span();
 
-                List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(datelist);
+                foreach (Date d in datelist) {
+                    datelist.Add(d);
+                }
 
-                //foreach (DateTime selectedDate in selectedDates)
-                //{
-                    //monthCalendar.AddBoldedDate(selectedDate);
-                //}
+                List<DateTime> selectedDateTimes = span.GetSelectedDateTimesByDateList(datelist);
 
+                foreach (DateTime selectedDt in selectedDateTimes)
+                {
+                    monthCalendar.AddBoldedDate(selectedDt);
+                }
+ 
                 monthCalendar.UpdateBoldedDates();
                 monthCalendar.Invalidate();
 
-                ////
             }
 
             if (!((AppointmentForm)sender).AddToBoldedDates)
@@ -143,8 +144,7 @@ namespace MyForm
                     
                     // Zugriff auf die Werte
                     //string date = form.SelectedDate;
-
-
+                    
                     
                     string text = form.TextBoxDate;
 
@@ -167,13 +167,12 @@ namespace MyForm
                     if (isTextEmpty) {
                         text = "mein Ereignis";
                     }
-
-
+                    
                     string[] textStartEnd = new string[3];
                     textStartEnd[0] = text;
                     textStartEnd[1] = startDay.Split(' ')[0] + " " + startHour;
                     textStartEnd[2] = endDay.Split(' ')[0] + " " + endHour;
-
+                     
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2]);
                     List<Date> datelist = new List<Date>();
                     datelist.Add(d);
