@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MyForm
@@ -120,10 +114,10 @@ namespace MyForm
                 //var text = row.Cells["text"].Value;
                 //var start = row.Cells["start"].Value;
                 //var end = row.Cells["end"].Value;
-                
+
                 DateDao dateDao = new DateDao();
                     dateDao.DeleteEntryById(id);
-                
+
                 checkBoxAddToBoldedDates.Checked = true;
                 Close();  
                 }
@@ -215,7 +209,8 @@ namespace MyForm
                 else
                 {
                     MessageBox.Show("Der Starttermin muss vor dem Endtermin sein.");
-                }
+                        e.Cancel = true;
+                    }
             }
             else {
                 SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);

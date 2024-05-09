@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace MyForm
@@ -14,7 +13,7 @@ namespace MyForm
         private AppointmentForm appointmentForm;
 
         private DateTime previousDate;
-
+        
         public Form1()
         {
             // Initialisierung des MonthCalendar
@@ -68,6 +67,8 @@ namespace MyForm
 
         }
 
+
+
         private void MonthCalendar_DateSelected(object sender, DateRangeEventArgs e)
         { 
             if (appointmentForm == null || appointmentForm.IsDisposed)
@@ -94,6 +95,8 @@ namespace MyForm
             }
         }
 
+        
+
         private void AppointmentForm_FormClosed(object sender, FormClosedEventArgs e)
         {
 
@@ -103,49 +106,23 @@ namespace MyForm
             // Aktualisieren des ausgewählten Datums, falls erforderlich
             selectedDate = monthCalendar.SelectionStart;
 
-            //TODO Hier eben alle Daten anzeigen für Monat und Jahr, welche in der DB sind. Dies sollte gestestet werden.
+            
             if (((AppointmentForm)sender).AddToBoldedDates) {
 
-                // Ausgewähltes Startdatum
-                DateTime selectedDate = monthCalendar.SelectionStart;
-
-                // Monat und Jahr auslesen
-                int selectedMonth = selectedDate.Month;
-                int selectedYear = selectedDate.Year;
-
-                DateDao dateDao = new DateDao();
-
-                List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(selectedMonth, selectedYear);
-
-                List<Date> datelist = new List<Date>();
-                Span span = new Span();
-
-                foreach (Date d in datelist) {
-                    datelist.Add(d);
-                }
-
-                List<DateTime> selectedDateTimes = span.GetSelectedDateTimesByDateList(datelist);
-
-                foreach (DateTime selectedDt in selectedDateTimes)
-                {
-                    monthCalendar.AddBoldedDate(selectedDt);
-                }
- 
-                monthCalendar.UpdateBoldedDates();
-                monthCalendar.Invalidate();
+                //TODO: Leider konnte ich es bislang anders nicht lösen. Wäääääääh ((
+                Application.Restart();
+                Environment.Exit(0);
 
             }
+
+
 
             if (!((AppointmentForm)sender).AddToBoldedDates)
             {
                 AppointmentForm form = sender as AppointmentForm;
                 if (form != null)
                 {
-                    
-                    // Zugriff auf die Werte
-                    //string date = form.SelectedDate;
-                    
-                    
+                                        
                     string text = form.TextBoxDate;
 
                     string startDay = form.StartDate.ToString();
