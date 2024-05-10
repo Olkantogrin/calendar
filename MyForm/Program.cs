@@ -25,6 +25,14 @@ namespace MyForm
 
             DrawCalendarForFreshMonth(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
 
+            prepareMonthCalendar();
+
+            // Hinzufügen des MonthCalendar zur Form
+            Controls.Add(monthCalendar);
+        }
+
+        private void prepareMonthCalendar()
+        {
             previousDate = monthCalendar.SelectionStart;
 
             // Benutzerdefinierte Schriftart für ausgewählte Daten
@@ -34,9 +42,6 @@ namespace MyForm
             monthCalendar.DateSelected += MonthCalendar_DateSelected;
 
             monthCalendar.DateChanged += MonthCalendar_DateChanged;
-
-            // Hinzufügen des MonthCalendar zur Form
-            Controls.Add(monthCalendar);
         }
 
         private void MonthCalendar_DateChanged(object sender, DateRangeEventArgs e)
@@ -108,10 +113,23 @@ namespace MyForm
 
             
             if (((AppointmentForm)sender).AddToBoldedDates) {
+                
+                Controls.Remove(monthCalendar);
 
-                //TODO: Leider konnte ich es bislang anders nicht lösen. Wäääääääh ((
-                Application.Restart();
-                Environment.Exit(0);
+                monthCalendar = new MonthCalendar
+                {
+                    CalendarDimensions = new Size(1, 1),
+                    Location = new Point(10, 10)
+                };
+
+                prepareMonthCalendar();
+
+                Controls.Add(monthCalendar);
+
+                DrawCalendarForFreshMonth(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
+
+                //Application.Restart();
+                //Environment.Exit(0);
 
             }
 

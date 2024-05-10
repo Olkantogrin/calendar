@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
+using System.Resources;
 using System.Windows.Forms;
 
 namespace MyForm
 {
     public partial class AppointmentForm : Form
     {
+        
         public string SelectedDate { get; private set; }
         public TimeSpan StartTime { get; private set; }
         public TimeSpan EndTime { get; private set; }
@@ -38,9 +41,11 @@ namespace MyForm
 
         DateTime selectedDateForUpDate;
 
-        public AppointmentForm(DateTime selectedDate) 
-        {
+        ResourceManager rm;
 
+        public AppointmentForm(DateTime selectedDate)
+        {
+            
             selectedDateForUpDate = selectedDate;
 
             InitializeComponent();
@@ -52,12 +57,13 @@ namespace MyForm
             // Erstellen des Kontrollkästchens
             checkBoxAddToBoldedDates = new CheckBox
             {
-                Text = "verwerfen",
+                Text = "discard",
                 Location = new Point(10, 10)
             };
-        Controls.Add(checkBoxAddToBoldedDates);
+            Controls.Add(checkBoxAddToBoldedDates);
 
         }
+         
 
         private void InitializeGridView(DateTime selectedDate)
         {
