@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.Resources;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MyForm
@@ -105,6 +108,11 @@ namespace MyForm
         private void AppointmentForm_FormClosed(object sender, FormClosedEventArgs e)
         {
 
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo("de-DE");
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             // Entfernen der Referenz auf die geschlossene Instanz von AppointmentForm
             appointmentForm = null;
 
@@ -160,7 +168,7 @@ namespace MyForm
                     bool isTextEmpty = String.IsNullOrEmpty(text);
 
                     if (isTextEmpty) {
-                        text = "mein Ereignis";
+                        text = resourceManager.GetString("my event");
                     }
                     
                     string[] textStartEnd = new string[3];

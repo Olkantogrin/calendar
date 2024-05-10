@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MyForm
@@ -54,10 +55,15 @@ namespace MyForm
 
             this.FormClosing += AppointmentForm_FormClosing;
 
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo("de-DE"); 
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             // Erstellen des Kontrollkästchens
             checkBoxAddToBoldedDates = new CheckBox
             {
-                Text = "discard",
+                Text = resourceManager.GetString("discard"),
                 Location = new Point(10, 10)
             };
             Controls.Add(checkBoxAddToBoldedDates);
