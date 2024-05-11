@@ -76,7 +76,6 @@ namespace MyForm
         }
 
 
-
         private void MonthCalendar_DateSelected(object sender, DateRangeEventArgs e)
         { 
             if (appointmentForm == null || appointmentForm.IsDisposed)
@@ -87,15 +86,6 @@ namespace MyForm
                 appointmentForm.FormClosed += AppointmentForm_FormClosed;
                 appointmentForm.Show();
 
-                /*
-                // Aktualisieren des ausgewählten Datums
-                selectedDate = monthCalendar.SelectionStart;
-                monthCalendar.AddBoldedDate(selectedDate);
-                monthCalendar.UpdateBoldedDates();
-
-                // Erzwingen einer Neumalerei des Kalenders
-                monthCalendar.Invalidate();
-                */
             }
             else {
                 // Wenn eine Instanz bereits geöffnet ist, fokussiere sie
@@ -161,9 +151,6 @@ namespace MyForm
                     TimeSpan end = form.EndTime;
 
                     string endHour = end.ToString().Substring(0, 5);
-
-                    // Setzen der Werte in der AppointmentForm
-                    //form.SetAppointmentDetails(date, start, end);
 
                     bool isTextEmpty = String.IsNullOrEmpty(text);
 
