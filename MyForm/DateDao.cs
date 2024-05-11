@@ -66,7 +66,6 @@ namespace MyForm
 
             Span span = new Span();
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
-
             return selectedDates;
         }
 

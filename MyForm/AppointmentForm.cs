@@ -42,11 +42,14 @@ namespace MyForm
 
         DateTime selectedDateForUpDate;
 
-        ResourceManager rm;
 
-        public AppointmentForm(DateTime selectedDate)
+        string locale = "de-DE";
+
+        public AppointmentForm(DateTime selectedDate, string loc)
         {
-            
+
+            locale = loc;
+
             selectedDateForUpDate = selectedDate;
 
             InitializeComponent();
@@ -56,7 +59,7 @@ namespace MyForm
             this.FormClosing += AppointmentForm_FormClosing;
 
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
-            CultureInfo ci = new CultureInfo("de-DE"); 
+            CultureInfo ci = new CultureInfo(locale); 
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
