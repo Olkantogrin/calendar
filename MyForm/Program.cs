@@ -63,7 +63,7 @@ namespace MyForm
             };
 
             // Füge die Werte zur Dropdown-Liste hinzu
-            dropdownList.Items.AddRange(new string[] { "English" });
+            dropdownList.Items.AddRange(new string[] { "English", "Deutsch" });
 
             // Hinzufügen der Event-Handler für die Dropdown-Liste
             dropdownList.SelectedIndexChanged += DropdownList_SelectedIndexChanged;
@@ -130,6 +130,11 @@ namespace MyForm
             if (dropdownList.SelectedIndex == 0)
            {
                 locale = "en-GB";
+            }
+
+            else if (dropdownList.SelectedIndex == 1)
+            {
+                locale = "de-DE";
             }
         }
 
