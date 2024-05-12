@@ -56,7 +56,7 @@ namespace MyForm
                 while (currentDateTime <= endDate)
                 {
                     dateTimes.Add(currentDateTime);
-                    currentDateTime = currentDateTime.AddDays(1); // Verändern Sie diese Zeiteinheit nach Bedarf
+                    currentDateTime = currentDateTime.AddDays(1); 
                 }
 
                 currentDateTime = endDate;
@@ -69,7 +69,7 @@ namespace MyForm
                 while (currentDateTime <= endDate.AddDays(-1))
                 {
                     dateTimes.Add(currentDateTime);
-                    currentDateTime = currentDateTime.AddDays(1); // Verändern Sie diese Zeiteinheit nach Bedarf
+                    currentDateTime = currentDateTime.AddDays(1); 
                 }
 
                 currentDateTime = endDate;
@@ -84,6 +84,64 @@ namespace MyForm
             return dateTimes;
         }
 
+        public Dictionary<Date, List<DateTime>> GetDisplayDatesToDateList(List<Date> datelist)
+        {
+            Dictionary<Date, List<DateTime>> res = new Dictionary<Date, List<DateTime>>();
+            List<DateTime> dateTimes;
 
+            foreach (Date d in datelist)
+            {
+
+                dateTimes = new List<DateTime>();
+
+                // Kulturinfo für das Datumsformat
+                CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+
+                // Konvertieren von a und b in DateTime-Objekte
+                DateTime startDate = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+                DateTime endDate = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+
+                string dateStartTime = Regex.Split(startDate.ToString(), @"\s+")[1];
+                string dateEndTime = Regex.Split(endDate.ToString(), @"\s+")[1];
+
+                bool isLessThan24Hours = GetLessThan24Hours(dateStartTime, dateEndTime);
+
+                if (isLessThan24Hours)
+                {
+                    // Schleife zur Generierung aller Termine zwischen startDate und endDate
+                    DateTime currentDateTime = startDate;
+                    while (currentDateTime <= endDate)
+                    {
+                        dateTimes.Add(currentDateTime);
+                        currentDateTime = currentDateTime.AddDays(1);
+                    }
+
+                    currentDateTime = endDate;
+                    dateTimes.Add(currentDateTime);
+
+                }
+                else
+                {
+                    // Schleife zur Generierung aller Termine zwischen startDate und endDate
+                    DateTime currentDateTime = startDate;
+                    while (currentDateTime <= endDate.AddDays(-1))
+                    {
+                        dateTimes.Add(currentDateTime);
+                        currentDateTime = currentDateTime.AddDays(1); 
+                    }
+
+                    currentDateTime = endDate;
+                    dateTimes.Add(currentDateTime);
+
+
+                }
+
+                res.Add(d, dateTimes);
+
+            }
+
+
+            return res;
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace MyForm
             }
         }
 
-
+        
         public List<DateTime> GetSelectedDatesForMonthAndYear(int month, int year)
         {
             List<Date> dates = new List<Date>();
@@ -67,6 +67,71 @@ namespace MyForm
             Span span = new Span();
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
             return selectedDates;
+        }
+
+        public Dictionary<Date, List<DateTime>> GetSelectedTextDatesForMonthAndYear(int month, int year)
+        {
+            List<Date> dates = new List<Date>();
+
+            string formattedMonth = month.ToString("D2"); // Ergebnis: "03"
+            string formattedYear = year.ToString("D4");
+
+            string monthYear = formattedMonth + "." + formattedYear;
+
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Hier können Sie auf die Daten zugreifen, z.B.:
+                            string text = reader["text"].ToString();
+                            string start = reader["start"].ToString();
+                            string end = reader["end"].ToString();
+
+                            Date d = new Date(text, start, end);
+                            dates.Add(d);
+
+                        }
+                    }
+                }
+            }
+
+            Span span = new Span();
+            Dictionary<Date, List<DateTime>> selectedDates = span.GetDisplayDatesToDateList(dates);
+            return selectedDates;
+        }
+
+        public string GetLocale()
+        {
+            string l = "de-DE"; //App default...
+
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = "SELECT locale FROM language";
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            l = reader["locale"].ToString();
+
+                        }
+                    }
+                }
+
+                return l;
+            }
         }
 
         public DataSet GetDataSetDates(DateTime selectedDate)
@@ -109,7 +174,47 @@ namespace MyForm
             return dataSet;
         }
 
-        internal void DeleteEntryById(object idVar)
+        public void UpdateLocale(string locale)
+        {
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = "UPDATE language SET locale = @locale"; 
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@locale", locale);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+
+        }
+
+        public void SetLocale(string locale)
+        {
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = "INSERT INTO language (locale) VALUES (@locale)"; 
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@locale", locale);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public string GetLocale(string locale)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteEntryById(object idVar)
         {
             string id = idVar.ToString();
 

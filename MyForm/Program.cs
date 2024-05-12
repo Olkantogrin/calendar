@@ -24,6 +24,7 @@ namespace MyForm
         public Form1()
         {
 
+            DateDao dateDao = new DateDao(); dateDao.SetLocale(locale);
 
             // Initialisierung des MonthCalendar
             monthCalendar = new MonthCalendar
@@ -88,38 +89,43 @@ namespace MyForm
             bool isSchedulerRunning = true;
             schedulerThread = new Thread(() =>
             {
-
                 DateDao dateDao = new DateDao();
-                List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
-                List<DisplayedDate> datelist = new List<DisplayedDate>();
-                foreach (DateTime selectedDate in selectedDates)
-                {
-                    datelist.Add(new DisplayedDate("Zu implementieren!", selectedDate.ToString()));
-                }
 
+                ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+                string loc = dateDao.GetLocale();
+                CultureInfo ci = new CultureInfo(loc);
+                Thread.CurrentThread.CurrentCulture = ci;
+                Thread.CurrentThread.CurrentUICulture = ci;
+                
+
+                Dictionary<Date, List<DateTime>> selectedDates = dateDao.GetSelectedTextDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
+
+                // So habe ich es nämlich früher gemacht:
                 while (isSchedulerRunning)
                 {
-                    foreach (var dt in datelist)
+                    foreach (KeyValuePair<Date, List<DateTime>> entry in selectedDates)
                     {
-                        // Überprüfe, ob das Ereignis in weniger als 10 Minuten beginnt
-                        DateTime dateTime = DateTime.ParseExact(dt.Time, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
-                        DateTime tenMinutesAhead = DateTime.Now.AddMinutes(10);
-                        DateTime zeroMinutesAhead = DateTime.Now;
-
-                        bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
-
-                        //TODO: Ic will wissen, wie der Termin heißt. Das dann da unten reinschrieben.
-                        if (alert)
+                        foreach (DateTime dateTime in entry.Value)
                         {
-                            MessageBox.Show($"Achtung! {dt.Text} beginnt in 10 Minuten.");
+
+                            DateTime tenMinutesAhead = DateTime.Now.AddMinutes(10);
+                            DateTime zeroMinutesAhead = DateTime.Now;
+
+                            bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
+
+                            if (alert)
+                            {  //TODO: locale soll in Threads jenseits des Mainthreads über die DB abgegriffen werden.
+                                MessageBox.Show($"{entry.Key.Text} " + resourceManager.GetString("starts within 10 minutes"));
+                            }
                         }
                     }
 
-                    //Thread.Sleep(10000);
 
-                    Thread.Sleep(60000); // Warte eine Minute, bevor die nächste Überprüfung erfolgt
+
+                    Thread.Sleep(20000);
+                    //Thread.Sleep(60000); // Warte eine Minute, bevor die nächste Überprüfung erfolgt
                 }
+                
             });
             schedulerThread.IsBackground = true;
             schedulerThread.Start();
@@ -127,14 +133,18 @@ namespace MyForm
 
         private void DropdownList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            DateDao dateDao = new DateDao();
+
             if (dropdownList.SelectedIndex == 0)
            {
                 locale = "en-GB";
+                dateDao.UpdateLocale(locale);
             }
 
             else if (dropdownList.SelectedIndex == 1)
             {
                 locale = "de-DE";
+                dateDao.UpdateLocale(locale);
             }
         }
 
@@ -163,7 +173,6 @@ namespace MyForm
             // Aktualisiere previousDate mit dem neuen Datum
             previousDate = monthCalendar.SelectionStart;
 
-            //TODO: Testen! 
             ReStartScheduler();
         }
 
@@ -291,7 +300,6 @@ namespace MyForm
                      // Erzwingen einer Neumalerei des Kalenders
                       monthCalendar.Invalidate();
 
-            //TODO: Testen!
             ReStartScheduler();
 
         }

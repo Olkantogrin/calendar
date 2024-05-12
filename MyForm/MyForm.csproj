@@ -73,7 +73,6 @@
     </Compile>
     <Compile Include="Date.cs" />
     <Compile Include="DateDao.cs" />
-    <Compile Include="DisplayedDate.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="Program.cs">
       <SubType>Form</SubType>
