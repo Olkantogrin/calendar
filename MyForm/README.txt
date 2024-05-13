@@ -7,4 +7,7 @@ Man hat nach dem Auswählen die Wahl: Wenn das Kästchen "verwerfen" geklickt wi
 schließen, und der Termin wird nicht abgespeichert. Wenn man dieses Kästchen nicht klickt, dann
 wird der Termin beim Schließen des Fensters abgespeichert. 
 
-Man könnte noch einen Button hinzufügen "speichern", mit dem man speichern kann.
+Ich kann gerne einen Filechooser herstellen, der in der Lage ist, ics-Dateien einzulesen.
+
+Und irgendwie eine Detailansicht für die Termine umsetzen (durch Klicken).
+Das Löschen auf ein x-Zeichen verlegen. Das bedeutet, dass die Lösch-Funktion auf das x verlegt werden muss.

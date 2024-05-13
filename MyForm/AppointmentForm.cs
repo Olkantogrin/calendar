@@ -37,7 +37,7 @@ namespace MyForm
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
-
+        private Button saveButton;
         private bool isCorrectEntries = false;
 
         DateTime selectedDateForUpDate;
@@ -80,6 +80,7 @@ namespace MyForm
             dataGridView.Width = 360;
             dataGridView.Location = new Point(10, 120);
             dataGridView.ScrollBars = ScrollBars.Vertical;
+            dataGridView.RowHeadersVisible = false;
 
             dataGridView.CellClick+=DataGridView_CellClick;
 
@@ -113,7 +114,20 @@ namespace MyForm
             dataGridView.DataSource = dateDao.GetDataSetDates(selectedDate);
             dataGridView.DataMember = "dates";
             
-            Controls.Add(dataGridView); 
+            Controls.Add(dataGridView);
+
+            saveButton = new Button();
+            saveButton.Text = "save";
+            saveButton.Location = new System.Drawing.Point(10, 370);
+            saveButton.Size = new System.Drawing.Size(100, 50);
+            saveButton.Click += new EventHandler(SaveButton_Click);
+            Controls.Add(saveButton);
+
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
