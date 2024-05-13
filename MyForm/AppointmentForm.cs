@@ -38,6 +38,9 @@ namespace MyForm
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
         private Button saveButton;
+
+        DataGridView dataGridView;
+
         private bool isCorrectEntries = false;
 
         DateTime selectedDateForUpDate;
@@ -76,7 +79,13 @@ namespace MyForm
 
         private void InitializeGridView(DateTime selectedDate)
         {
-            DataGridView dataGridView = new DataGridView();
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
+
+            dataGridView = new DataGridView();
             dataGridView.Width = 360;
             dataGridView.Location = new Point(10, 120);
             dataGridView.ScrollBars = ScrollBars.Vertical;
@@ -106,6 +115,14 @@ namespace MyForm
             column.Name = "end";
             dataGridView.Columns.Add(column);
 
+            column = new DataGridViewTextBoxColumn();
+            column.Name = "xColumn";
+            column.HeaderText = "";
+            dataGridView.Columns.Add(column);
+
+            // Ereignis für das Befüllen der Zellen registrieren
+            dataGridView.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridView_RowsAdded);
+            
             DateDao dateDao = new DateDao();
 
             dataGridView.AllowUserToAddRows = false;
@@ -117,12 +134,21 @@ namespace MyForm
             Controls.Add(dataGridView);
 
             saveButton = new Button();
-            saveButton.Text = "save";
+            saveButton.Text = resourceManager.GetString("save / close");
             saveButton.Location = new System.Drawing.Point(10, 370);
             saveButton.Size = new System.Drawing.Size(100, 50);
             saveButton.Click += new EventHandler(SaveButton_Click);
             Controls.Add(saveButton);
 
+        }
+
+        private void DataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+            {
+                // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
+                dataGridView.Rows[i].Cells["xColumn"].Value = "x";
+            }
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -135,21 +161,28 @@ namespace MyForm
 
             if (e.RowIndex >= 0)
             {
-                // Zugriff auf die aktuelle Reihe
-                DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
+                if (e.ColumnIndex == dataGridView.Columns["xColumn"].Index)
+                {
 
-                
-                var id = row.Cells["id"].Value;
-                //var text = row.Cells["text"].Value;
-                //var start = row.Cells["start"].Value;
-                //var end = row.Cells["end"].Value;
+                    // Zugriff auf die aktuelle Reihe
+                    DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
 
-                DateDao dateDao = new DateDao();
+
+                    var id = row.Cells["id"].Value;
+                    //var text = row.Cells["text"].Value;
+                    //var start = row.Cells["start"].Value;
+                    //var end = row.Cells["end"].Value;
+
+                    DateDao dateDao = new DateDao();
                     dateDao.DeleteEntryById(id);
 
-                checkBoxAddToBoldedDates.Checked = true;
-                Close();  
+                    checkBoxAddToBoldedDates.Checked = true;
+                    Close();
                 }
+                else {
+                    MessageBox.Show("Die Darstellung des Datensatzes ist noch nicht implementiert.");
+                }
+            }
         }
 
         private void InitializeAppointmentControls()

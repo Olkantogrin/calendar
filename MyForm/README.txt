@@ -10,4 +10,3 @@ wird der Termin beim Schließen des Fensters abgespeichert.
 Ich kann gerne einen Filechooser herstellen, der in der Lage ist, ics-Dateien einzulesen.
 
 Und irgendwie eine Detailansicht für die Termine umsetzen (durch Klicken).
-Das Löschen auf ein x-Zeichen verlegen. Das bedeutet, dass die Lösch-Funktion auf das x verlegt werden muss.

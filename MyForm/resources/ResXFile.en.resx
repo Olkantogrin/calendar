@@ -123,6 +123,9 @@
   <data name="my event" xml:space="preserve">
     <value>my event</value>
   </data>
+  <data name="save / close" xml:space="preserve">
+    <value>save / close</value>
+  </data>
   <data name="starts within 10 minutes" xml:space="preserve">
     <value>starts within 10 minutes</value>
   </data>
