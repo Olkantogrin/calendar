@@ -14,7 +14,7 @@ namespace MyForm.reader
             int ret = -1;
 
             if ("ICS".Equals(dateReaderType) && path.EndsWith("ics")) {
-               ret = ClientCode(new SpecificReaderICF(), path);
+               ret = ClientCode(new SpecificReaderICS(), path);
             }
 
             return ret;

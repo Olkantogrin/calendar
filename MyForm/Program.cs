@@ -65,8 +65,7 @@ namespace MyForm
             // Hinzufügen der Dropdown-Liste zur Form
             Controls.Add(dropdownList);
 
-            ///////////////////////////////////////////////////////////////////////////////////
-
+        
             DateDao dateDao = new DateDao();
 
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
@@ -87,10 +86,7 @@ namespace MyForm
 
             // Registriere das Click-Ereignis
             readerButtonICS.Click += ReadButton_ClickICS;
-
-            ///////////////////////////////////////////////////////////////////////////////////
-
-
+            
         }
 
         private void ReadButton_ClickICS(object sender, EventArgs e)
@@ -117,12 +113,33 @@ namespace MyForm
             int datesRead = datesReader.ReadeDatesFile(readFilePath, "ICS");
 
             if (datesRead > -1) {
-                
-                //TODO: Restart ersetzen durch Kalender neu aufbauen.
-                Application.Restart();
-                Environment.Exit(0);
-             }
-           }
+
+                    ///////////////////////////////////////////////////////////
+
+                    //TODO: Testen.
+
+                    Controls.Remove(monthCalendar);
+
+                    monthCalendar = new MonthCalendar
+                    {
+                        CalendarDimensions = new Size(1, 1),
+                        Location = new Point(10, 10)
+                    };
+
+                    prepareMonthCalendar();
+
+                    Controls.Add(monthCalendar);
+
+                    DrawCalendarForFreshMonth(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
+
+
+                    // Application.Restart();
+                    // Environment.Exit(0);
+
+                    ///////////////////////////////////////////////////////////
+
+                }
+            }
         }
 
         private void ReStartScheduler() {

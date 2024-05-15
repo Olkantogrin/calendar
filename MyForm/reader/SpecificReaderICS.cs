@@ -1,6 +1,6 @@
 ﻿namespace MyForm.reader
 { 
-        public class SpecificReaderICF : Creator
+        public class SpecificReaderICS : Creator
         {
             public override IProdukt FactoryMethod()
             {

@@ -32,13 +32,23 @@ namespace MyForm.reader
                 }
 
                 DateTime dateTimeStart = DateTime.ParseExact(start, "yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                string formattedStringStart = dateTimeStart.ToString("dd.MM.yyyy HH:mm");
+                //string formattedStringStart = dateTimeStart.ToString("dd.MM.yyyy HH:mm");
 
                 DateTime dateTimeEnd = DateTime.ParseExact(end, "yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                string formattedStringEnd = dateTimeEnd.ToString("dd.MM.yyyy HH:mm");
+                //string formattedStringEnd = dateTimeEnd.ToString("dd.MM.yyyy HH:mm");
+
+                DateTimeConverter dtConverter = new DateTimeConverter();
+
+                DateTime dateTimeStartMez = dtConverter.ConvertZuluToMezOrMeSz(dateTimeStart);
+
+                string formattedDateTimeStartMez = dateTimeStartMez.ToString("dd.MM.yyyy HH:mm");
+
+                DateTime dateTimeEndMez = dtConverter.ConvertZuluToMezOrMeSz(dateTimeEnd);
+
+                string formattedDateTimeEndMez = dateTimeEndMez.ToString("dd.MM.yyyy HH:mm");
 
 
-                Date date = new Date(text, formattedStringStart, formattedStringEnd);
+                Date date = new Date(text, formattedDateTimeStartMez, formattedDateTimeEndMez);
 
                 return date;
             }
