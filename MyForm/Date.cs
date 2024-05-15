@@ -32,5 +32,13 @@
             this.start = start;
             this.end = end;
         }
+
+        
+        public override string ToString()
+        {
+            // Gibt den Namen und das Alter der Person zurück:
+            return $"Text: {Text}, Start: {Start}, Alter: {End}";
+        }
+        
     }
 }

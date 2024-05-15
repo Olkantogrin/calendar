@@ -28,7 +28,7 @@ namespace MyForm.reader
 
             if (date == null) { return -1; }
 
-            //TODO: Hier an dieser Stelle das Date in die DB kloppen.
+            dateDao.SaveAppointment(date);
 
             return 0;
         }

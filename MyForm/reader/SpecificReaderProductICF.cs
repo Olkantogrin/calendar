@@ -13,8 +13,9 @@ namespace MyForm.reader
             string[] lines = content.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             string text = lines[8]; //TEXT 
-            string start = lines[18]; //START
-            string end = lines[20]; //END
+            string start = lines[18].Split(':')[1]; //START
+            string end = lines[20].Split(':')[1]; //END
+
 
             if ((!IsZuluTime(start) || !IsZuluTime(end)) || !text.StartsWith("SUMMARY:"))
             {
@@ -24,11 +25,17 @@ namespace MyForm.reader
             }
             else {
 
+                int index = text.IndexOf("SUMMARY:");
+                if (index != -1)
+                {
+                    text = text.Substring(index + "SUMMARY:".Length);
+                }
+
                 DateTime dateTimeStart = DateTime.ParseExact(start, "yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                string formattedStringStart = dateTimeStart.ToString("yyyy-MM-ddTHH:mm");
+                string formattedStringStart = dateTimeStart.ToString("dd.MM.yyyy HH:mm");
 
                 DateTime dateTimeEnd = DateTime.ParseExact(end, "yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                string formattedStringEnd = dateTimeEnd.ToString("yyyy-MM-ddTHH:mm");
+                string formattedStringEnd = dateTimeEnd.ToString("dd.MM.yyyy HH:mm");
 
 
                 Date date = new Date(text, formattedStringStart, formattedStringEnd);
