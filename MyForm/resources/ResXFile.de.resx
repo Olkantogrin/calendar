@@ -123,6 +123,9 @@
   <data name="my event" xml:space="preserve">
     <value>mein Ereignis</value>
   </data>
+  <data name="read file" xml:space="preserve">
+    <value>Datei einlesen</value>
+  </data>
   <data name="save / close" xml:space="preserve">
     <value>speichern / schließen</value>
   </data>

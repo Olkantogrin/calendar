@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,13 +20,15 @@ namespace MyForm
         private ComboBox dropdownList;
         private string locale = "de-DE";
 
+        private string readFilePath;
+
         private Thread schedulerThread;
 
         public Form1()
         {
 
-            DateDao dateDao = new DateDao(); dateDao.SetLocale(locale);
 
+            
             // Initialisierung des MonthCalendar
             monthCalendar = new MonthCalendar
             {
@@ -40,19 +43,6 @@ namespace MyForm
             // Hinzufügen des MonthCalendar zur Form
             Controls.Add(monthCalendar);
 
-            /*
-            DateDao dateDao = new DateDao();
-            List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
-            List<DisplayedDate> datelist = new List<DisplayedDate>();
-            foreach (DateTime selectedDate in selectedDates)
-            {
-                datelist.Add(new DisplayedDate("Zu implementieren!", selectedDate.ToString()));
-            }
-
-            scheduler = new Scheduler(datelist);
-            
-            StartScheduler();
-            */
 
             StartScheduler();
 
@@ -64,7 +54,7 @@ namespace MyForm
             };
 
             // Füge die Werte zur Dropdown-Liste hinzu
-            dropdownList.Items.AddRange(new string[] { "English", "Deutsch" });
+            dropdownList.Items.AddRange(new string[] { "English", "Deutsch", "русский" });
 
             // Hinzufügen der Event-Handler für die Dropdown-Liste
             dropdownList.SelectedIndexChanged += DropdownList_SelectedIndexChanged;
@@ -75,9 +65,66 @@ namespace MyForm
             // Hinzufügen der Dropdown-Liste zur Form
             Controls.Add(dropdownList);
 
+            ///////////////////////////////////////////////////////////////////////////////////
+
+            DateDao dateDao = new DateDao();
+
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            string loc = dateDao.GetLocale();
+            CultureInfo ci = new CultureInfo(loc);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+            
+            Button readerButtonICS = new Button
+            {
+                Text = resourceManager.GetString("read file"),
+                Location = new System.Drawing.Point(170, 200),
+                Size = new System.Drawing.Size(100, 25)
+            };
+
+            // Füge den Button zur Form hinzu
+            this.Controls.Add(readerButtonICS);
+
+            // Registriere das Click-Ereignis
+            readerButtonICS.Click += ReadButton_ClickICS;
+
+            ///////////////////////////////////////////////////////////////////////////////////
+
+
         }
 
-        
+        private void ReadButton_ClickICS(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Textdateien (*.txt)|*.txt|Alle Dateien (*.*)|*.*";
+            openFileDialog.Title = "Datei auswählen";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    readFilePath = openFileDialog.FileName;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(readFilePath)) { 
+
+            reader.ReaderClient datesReader = new reader.ReaderClient();
+            int datesRead = datesReader.ReadeDatesFile(readFilePath, "ICS");
+
+            if (datesRead > -1) {
+                
+                //TODO: Restart ersetzen durch Kalender neu aufbauen.
+                Application.Restart();
+                Environment.Exit(0);
+             }
+           }
+        }
+
         private void ReStartScheduler() {
             schedulerThread.Abort();
             StartScheduler();
@@ -114,14 +161,12 @@ namespace MyForm
                             bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
 
                             if (alert)
-                            {  //TODO: locale soll in Threads jenseits des Mainthreads über die DB abgegriffen werden.
+                            {  
                                 MessageBox.Show($"{entry.Key.Text} " + resourceManager.GetString("starts within 10 minutes"));
                             }
                         }
                     }
-
-
-
+                    
                     Thread.Sleep(20000);
                     //Thread.Sleep(60000); // Warte eine Minute, bevor die nächste Überprüfung erfolgt
                 }
@@ -146,6 +191,15 @@ namespace MyForm
                 locale = "de-DE";
                 dateDao.UpdateLocale(locale);
             }
+
+            else if (dropdownList.SelectedIndex == 2)
+            {
+                locale = "ru-RU";
+                dateDao.UpdateLocale(locale);
+            }
+
+            Application.Restart();
+            Environment.Exit(0);
         }
 
         private void prepareMonthCalendar()

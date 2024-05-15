@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="discard" xml:space="preserve">
-    <value>discard</value>
+    <value>выбросить</value>
   </data>
   <data name="my event" xml:space="preserve">
-    <value>my event</value>
+    <value>моё событие</value>
   </data>
   <data name="read file" xml:space="preserve">
-    <value>read file</value>
+    <value>прочитать файл</value>
   </data>
   <data name="save / close" xml:space="preserve">
-    <value>save / close</value>
+    <value>сохранить / закрыть</value>
   </data>
   <data name="starts within 10 minutes" xml:space="preserve">
-    <value>starts within 10 minutes</value>
+    <value>начинается в течение 10 минут</value>
   </data>
 </root>
