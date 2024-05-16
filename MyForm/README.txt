@@ -8,4 +8,4 @@ wird der Termin beim Schließen des Fensters abgespeichert.
 
 -------------------------------------------------------------------------------------------------------------------
 
-Irgendwie eine Detailansicht (in Verbindung mit einem Feld Notizen) für die Termine umsetzen (durch Klicken).
+Und jetzt: Irgendwie eine Detailansicht (in Verbindung mit einem Feld Notizen) für die Termine umsetzen (durch Klicken).

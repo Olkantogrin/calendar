@@ -84,7 +84,7 @@
     <Compile Include="reader\MeineException.cs" />
     <Compile Include="reader\ReaderClient.cs" />
     <Compile Include="reader\SpecificReaderICS.cs" />
-    <Compile Include="reader\SpecificReaderProductICF.cs" />
+    <Compile Include="reader\SpecificReaderProductICS.cs" />
     <Compile Include="resources\ResXFile.en.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
