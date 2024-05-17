@@ -180,7 +180,16 @@ namespace MyForm
                     Close();
                 }
                 else {
-                    MessageBox.Show("Die Darstellung des Datensatzes ist noch nicht implementiert.");
+                    
+                    // Zugriff auf die aktuelle Reihe
+                    DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
+                    var id = row.Cells["id"].Value;
+
+                    // Neue Form erstellen und die id übergeben
+                    DetailsForm detailsForm = new DetailsForm(id);
+                    detailsForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
+
+
                 }
             }
         }

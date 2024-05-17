@@ -73,6 +73,12 @@
     </Compile>
     <Compile Include="Date.cs" />
     <Compile Include="DateDao.cs" />
+    <Compile Include="DetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DetailsForm.Designer.cs">
+      <DependentUpon>DetailsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entry.cs" />
     <Compile Include="Program.cs">
       <SubType>Form</SubType>
