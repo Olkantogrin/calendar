@@ -9,7 +9,7 @@ namespace MyForm
 {
     public partial class AppointmentForm : Form
     {
-        
+        public int SelectedRepetitionIndex { get; private set; }
         public string SelectedDate { get; private set; }
         public TimeSpan StartTime { get; private set; }
         public TimeSpan EndTime { get; private set; }
@@ -34,6 +34,7 @@ namespace MyForm
         private bool datePickerSelected = false;
 
         private CheckBox checkBoxAddToBoldedDates;
+        private ComboBox comboBox;
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
@@ -196,6 +197,27 @@ namespace MyForm
 
         private void InitializeAppointmentControls()
         {
+
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
+            comboBox = new ComboBox();
+
+            comboBox.Location = new Point(100, 10); // X, Y Koordinaten auf dem Formular
+            comboBox.Size = new Size(125, 20); // Breite, Höhe
+            
+            comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
+            comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m"); 
+            comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y"); 
+
+            // Optional: Standardauswahl setzen
+            comboBox.SelectedIndex = 0; // Wählt die erste Option "wöchentlich" als Standard
+
+            // Fügen Sie die Combobox zum Formular hinzu
+            this.Controls.Add(comboBox);
+
             textBoxDate = new TextBox
             {
                 Location = new Point(10, 40),
@@ -286,6 +308,7 @@ namespace MyForm
             else {
                 SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
             }
+                SelectedRepetitionIndex = comboBox.SelectedIndex;
             }
         }
 

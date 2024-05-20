@@ -17,12 +17,13 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = "INSERT INTO dates (text, start, end) VALUES (@text, @start, @end)";
+                string sql = "INSERT INTO dates (text, start, end, repeat) VALUES (@text, @start, @end, @repeat)";
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@text", date.Text);
                     command.Parameters.AddWithValue("@start", date.Start);
                     command.Parameters.AddWithValue("@end", date.End);
+                    command.Parameters.AddWithValue("@repeat", date.Repeat);
 
                     command.ExecuteNonQuery();
                 }
@@ -44,22 +45,29 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR((start LIKE '%.{formattedYear}%' OR end LIKE '%.{formattedYear}%') AND repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)";
+
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            // Hier können Sie auf die Daten zugreifen, z.B.:
                             string text = reader["text"].ToString();
                             string start = reader["start"].ToString();
                             string end = reader["end"].ToString();
+                            string repeat = reader["repeat"].ToString();
 
-                            Date d = new Date(text, start, end);
+                            Date d = new Date(text, start, end, repeat);
+
                             dates.Add(d);
 
                         }
+                        
+                        dates = SetCorrectDateForRepeatedDates(dates, month, year);
+ 
+
                     }
                 }
             }
@@ -73,7 +81,7 @@ namespace MyForm
         {
             List<Date> dates = new List<Date>();
 
-            string formattedMonth = month.ToString("D2"); // Ergebnis: "03"
+            string formattedMonth = month.ToString("D2");
             string formattedYear = year.ToString("D4");
 
             string monthYear = formattedMonth + "." + formattedYear;
@@ -83,22 +91,28 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR((start LIKE '%.{formattedYear}%' OR end LIKE '%.{formattedYear}%') AND repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)";
+
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            // Hier können Sie auf die Daten zugreifen, z.B.:
                             string text = reader["text"].ToString();
                             string start = reader["start"].ToString();
                             string end = reader["end"].ToString();
+                            string repeat = reader["repeat"].ToString();
 
-                            Date d = new Date(text, start, end);
+                            Date d = new Date(text, start, end, repeat);
+
                             dates.Add(d);
 
                         }
+
+                        dates = SetCorrectDateForRepeatedDates(dates, month, year);
+                        
                     }
                 }
             }
@@ -106,6 +120,87 @@ namespace MyForm
             Span span = new Span();
             Dictionary<Date, List<DateTime>> selectedDates = span.GetDisplayDatesToDateList(dates);
             return selectedDates;
+        }
+
+        private List<Date> SetCorrectDateForRepeatedDates(List<Date> dates, int month, int year)
+        {
+
+            List<Date> datesresult = new List<Date>();
+            
+            foreach (Date d in dates) {
+                if ("y".Equals(d.Repeat))
+                {
+                    //Die Grund"kultur" der App ist das deutsche Format
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+                    DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+                    DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+
+                    DateTime updatedDateStart = new DateTime(year, parsedDateStart.Month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+                    DateTime updatedDateEnd = new DateTime(year, parsedDateEnd.Month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
+
+                    string updatedStart = updatedDateStart.ToString();
+                    string updatedEnd = updatedDateEnd.ToString();
+
+                    if (updatedStart.Length > 3)
+                    {
+                        updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
+                    }
+
+                    if (updatedEnd.Length > 3)
+                    {
+                        updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
+                    }
+
+                    d.Start = updatedStart;
+                    d.End = updatedEnd;
+
+                    datesresult.Add(d);
+                }
+                
+                else if ("m".Equals(d.Repeat))
+                {
+                    //TODO: Testen --> funktioniert nicht.
+                    CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+                    DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+                    DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+
+                    DateTime updatedDateStart = new DateTime(parsedDateStart.Year, month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+                    DateTime updatedDateEnd = new DateTime(parsedDateEnd.Year, month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
+
+                    if (updatedDateStart.Month >= parsedDateStart.Month) {
+                        string updatedStart = updatedDateStart.ToString();
+                        string updatedEnd = updatedDateEnd.ToString();
+
+                        if (updatedStart.Length > 3)
+                        {
+                            updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
+                        }
+
+                        if (updatedEnd.Length > 3)
+                        {
+                            updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
+                        }
+
+                        d.Start = updatedStart;
+                        d.End = updatedEnd;
+
+                        datesresult.Add(d);
+
+
+
+                    }
+                     
+                }
+
+                else
+                {
+                     
+                    datesresult.Add(d);
+
+                }
+            }
+
+            return datesresult;
         }
 
         public string GetLocale()

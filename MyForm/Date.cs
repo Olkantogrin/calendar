@@ -5,6 +5,7 @@
         private string text;
         private string start;
         private string end;
+        private string repeat;
 
         public string Text
         {
@@ -26,18 +27,26 @@
             set { end = value; }
         }
 
-        public Date(string text, string start, string end)
+        public string Repeat
+        {
+            get { return repeat; }
+            set { repeat = value; }
+        }
+
+
+        public Date(string text, string start, string end, string repeat)
         {
             this.text = text;
             this.start = start;
             this.end = end;
+            this.repeat = repeat;
         }
 
         
         public override string ToString()
         {
             // Gibt den Namen und das Alter der Person zurück:
-            return $"Text: {Text}, Start: {Start}, Alter: {End}";
+            return $"Text: {Text}, Start: {Start}, End: {End}, Repeat: {Repeat}";
         }
         
     }

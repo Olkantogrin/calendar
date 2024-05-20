@@ -31,21 +31,21 @@ namespace MyForm
         }
 
 
+
         public List<DateTime> GetSelectedDateTimesByDateList(List<Date> datelist)
         {
-
             List<DateTime> dateTimes = new List<DateTime>(); 
-
+            
             foreach (Date d in datelist) {
             // Kulturinfo für das Datumsformat
             CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
 
-                // Konvertieren von a und b in DateTime-Objekte
-                DateTime startDate = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
-                DateTime endDate = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+            // Konvertieren von a und b in DateTime-Objekte
+            DateTime startDate = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+            DateTime endDate = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
-               string dateStartTime = Regex.Split(startDate.ToString(), @"\s+")[1];
-               string dateEndTime = Regex.Split(endDate.ToString(), @"\s+")[1];
+            string dateStartTime = Regex.Split(startDate.ToString(), @"\s+")[1];
+            string dateEndTime = Regex.Split(endDate.ToString(), @"\s+")[1];
  
             bool isLessThan24Hours = GetLessThan24Hours(dateStartTime, dateEndTime);
             

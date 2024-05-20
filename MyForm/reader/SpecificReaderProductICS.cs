@@ -32,7 +32,7 @@ namespace MyForm.reader
             if ((!IsZuluTime(start) || !IsZuluTime(end)))
             {
                 MessageBox.Show("Reader Exception");
-                throw new MeineException("Reader Exception");
+                throw new RdrException("Reader Exception");
 
             }
             else {
@@ -62,7 +62,7 @@ namespace MyForm.reader
                 string formattedDateTimeEndMez = dateTimeEndMez.ToString("dd.MM.yyyy HH:mm");
 
 
-                Date date = new Date(text, formattedDateTimeStartMez, formattedDateTimeEndMez);
+                Date date = new Date(text, formattedDateTimeStartMez, formattedDateTimeEndMez, "n");
 
                 return date;
             }

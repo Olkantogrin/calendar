@@ -87,7 +87,7 @@
     <Compile Include="reader\Creator.cs" />
     <Compile Include="reader\DateTimeConverter.cs" />
     <Compile Include="reader\IProdukt.cs" />
-    <Compile Include="reader\MeineException.cs" />
+    <Compile Include="reader\RdrException.cs" />
     <Compile Include="reader\ReaderClient.cs" />
     <Compile Include="reader\SpecificReaderICS.cs" />
     <Compile Include="reader\SpecificReaderProductICS.cs" />

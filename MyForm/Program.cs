@@ -114,10 +114,7 @@ namespace MyForm
 
             if (datesRead > -1) {
 
-                    ///////////////////////////////////////////////////////////
-
-                    //TODO: Testen.
-
+                    
                     Controls.Remove(monthCalendar);
 
                     monthCalendar = new MonthCalendar
@@ -133,11 +130,7 @@ namespace MyForm
                     DrawCalendarForFreshMonth(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
 
 
-                    // Application.Restart();
-                    // Environment.Exit(0);
-
-                    ///////////////////////////////////////////////////////////
-
+                    
                 }
             }
         }
@@ -164,7 +157,6 @@ namespace MyForm
 
                 Dictionary<Date, List<DateTime>> selectedDates = dateDao.GetSelectedTextDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
 
-                // So habe ich es nämlich früher gemacht:
                 while (isSchedulerRunning)
                 {
                     foreach (KeyValuePair<Date, List<DateTime>> entry in selectedDates)
@@ -348,8 +340,20 @@ namespace MyForm
                     textStartEnd[0] = text;
                     textStartEnd[1] = startDay.Split(' ')[0] + " " + startHour;
                     textStartEnd[2] = endDay.Split(' ')[0] + " " + endHour;
-                     
-                    Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2]);
+
+                    int selectedRepetitionIndex = form.SelectedRepetitionIndex;
+                    string repetitionType = "n"; // Standardwert
+
+                    if (selectedRepetitionIndex == 1)
+                    {
+                        repetitionType = "m"; // Monatliche Wiederholung
+                    }
+                    else if (selectedRepetitionIndex == 2)
+                    {
+                        repetitionType = "y"; // Jährliche Wiederholung
+                    }
+
+                    Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
                     List<Date> datelist = new List<Date>();
                     datelist.Add(d);
                     Span span = new Span();
