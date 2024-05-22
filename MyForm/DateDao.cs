@@ -135,9 +135,18 @@ namespace MyForm
                     DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
                     DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
+                    //TODO: Hier kann man nicht einfach das gewählte Jahr setzen, es zählt die Differenz zum start! -> Testen.
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                     DateTime updatedDateStart = new DateTime(year, parsedDateStart.Month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
-                    DateTime updatedDateEnd = new DateTime(year, parsedDateEnd.Month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
+                    //DateTime updatedDateEnd = new DateTime(year, parsedDateEnd.Month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
 
+                    // Zeitspanne zwischen parsedDateStart und parsedDateEnd
+                    TimeSpan difference = parsedDateEnd - parsedDateStart;
+
+                    // Die kommt dazu.
+                    DateTime updatedDateEnd = updatedDateStart.Add(difference);
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    
                     string updatedStart = updatedDateStart.ToString();
                     string updatedEnd = updatedDateEnd.ToString();
 
@@ -159,15 +168,25 @@ namespace MyForm
                 
                 else if ("m".Equals(d.Repeat))
                 {
-                    //TODO: Testen --> funktioniert nicht.
+                    
                     CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                     DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
                     DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
-                    DateTime updatedDateStart = new DateTime(parsedDateStart.Year, month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
-                    DateTime updatedDateEnd = new DateTime(parsedDateEnd.Year, month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
+                    //TODO: Testen --> Was ist, wenn ein Termn am 31. ist und wiederholt werden soll?
+                    /////////////////////////////////////////////////////////////////////////////////////////////
+                    DateTime updatedDateStart = new DateTime(parsedDateStart.Year, month, AdjustLastday(month, parsedDateStart.Day), parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+
+                    //TODO: Hier kann man nicht einfach den gewählten Monat setzen, es zählt die Differenz zum start!.
+                    //DateTime updatedDateEnd = new DateTime(parsedDateEnd.Year, month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
+
+                    TimeSpan difference = parsedDateEnd - parsedDateStart;
+
+                    DateTime updatedDateEnd = updatedDateStart.Add(difference);
+                    /////////////////////////////////////////////////////////////////////////////////////////////
 
                     if (updatedDateStart.Month >= parsedDateStart.Month) {
+
                         string updatedStart = updatedDateStart.ToString();
                         string updatedEnd = updatedDateEnd.ToString();
 
@@ -201,6 +220,39 @@ namespace MyForm
             }
 
             return datesresult;
+        }
+
+        private int AdjustLastday(int month, int day)
+        {
+            if (day > 29) {
+
+                int lastDay = day;
+
+                switch (month) {
+                    case 2:
+                        lastDay = 29;
+                        break;
+                    case 4:
+                        lastDay = 30;
+                        break;
+                    case 6:
+                        lastDay = 30;
+                        break;
+                    case 9:
+                        lastDay = 30;
+                        break;
+                    case 11:
+                        lastDay = 30;
+                        break;
+                    default:
+                        lastDay = day;
+                        break;
+
+                }
+                return lastDay;
+            }
+
+            return day;
         }
 
         public string GetLocale()

@@ -8,4 +8,7 @@ wird der Termin beim Schließen des Fensters abgespeichert.
 
 -------------------------------------------------------------------------------------------------------------------
 
-Irgendwie eine Detailansicht (in Verbindung mit einem Feld Notizen) für die Termine umsetzen (durch Klicken).
+Eine Detailansicht (in Verbindung mit einem Feld Notizen) für die Termine umsetzen (durch Klicken).
+
+Wöchentliches Wiederholen eines Termins auch - da muss man dann aber alle Termine im Monat in die DB-Tabelle
+schreiben o. ä.
