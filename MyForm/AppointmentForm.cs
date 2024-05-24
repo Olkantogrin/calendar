@@ -40,7 +40,7 @@ namespace MyForm
         private DateTimePicker dateTimePickerEnd;
         private Button saveButton;
 
-        DataGridView dataGridView;
+        public DataGridView dataGridView;
 
         private bool isCorrectEntries = false;
 
@@ -187,7 +187,7 @@ namespace MyForm
                     var id = row.Cells["id"].Value;
 
                     // Neue Form erstellen und die id übergeben
-                    DetailsForm detailsForm = new DetailsForm(id);
+                    DetailsForm detailsForm = new DetailsForm(id, this);
                     detailsForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
 
 
