@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Data;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace MyForm
 {
@@ -76,6 +77,8 @@ namespace MyForm
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
             return selectedDates;
         }
+
+
 
         public Dictionary<Date, List<DateTime>> GetSelectedTextDatesForMonthAndYear(int month, int year)
         {
@@ -213,6 +216,27 @@ namespace MyForm
             return datesresult;
         }
 
+        internal void UpdateDateWithId(object id, string text, DateTime dateTimeStart, DateTime dateTimeEnd)
+        {
+            string idd = id.ToString();
+            string start = dateTimeStart.ToString();
+            string end = dateTimeEnd.ToString();
+
+            MessageBox.Show(idd);
+            MessageBox.Show(start);
+            MessageBox.Show(end);
+
+            string pattern = @"(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}):\d{2}";
+            string replacement = "$1";
+
+            start = Regex.Replace(start, pattern, replacement);
+            end = Regex.Replace(end, pattern, replacement);
+
+            //TODO: Hier Update in der DB machen.
+
+            throw new NotImplementedException();
+        }
+
         private int AdjustLastDay(int month, int day, int year)
         {
             int last = 28;
@@ -289,7 +313,43 @@ namespace MyForm
             }
         }
 
-        public DataSet GetDataSetDates(DateTime selectedDate)
+        public Date GetDateForId(object id)
+        {
+            Date d = null;
+
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
+                string sql = $"SELECT * FROM dates WHERE id = '{id}'";
+
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string text = reader["text"].ToString();
+                            string start = reader["start"].ToString();
+                            string end = reader["end"].ToString();
+                            string repeat = reader["repeat"].ToString();
+
+                            d = new Date(text, start, end, repeat);
+
+                        }
+
+
+
+                    }
+                }
+            }
+
+            return d;
+        }
+
+        public DataSet GetDataSetDatesForSelectedDate(DateTime selectedDate)
         {
 
             string day = selectedDate.Day.ToString("D2");
@@ -364,11 +424,7 @@ namespace MyForm
             }
         }
 
-        public string GetLocale(string locale)
-        {
-            throw new NotImplementedException();
-        }
-
+ 
         public void DeleteEntryById(object idVar)
         {
             string id = idVar.ToString();

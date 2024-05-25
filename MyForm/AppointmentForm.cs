@@ -85,14 +85,28 @@ namespace MyForm
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
+            CreateDataGridViewWithReadOnly(selectedDate, false);
 
+            Controls.Add(dataGridView);
+
+            saveButton = new Button();
+            saveButton.Text = resourceManager.GetString("save / close");
+            saveButton.Location = new System.Drawing.Point(10, 370);
+            saveButton.Size = new System.Drawing.Size(100, 50);
+            saveButton.Click += new EventHandler(SaveButton_Click);
+            Controls.Add(saveButton);
+
+        }
+
+        private void CreateDataGridViewWithReadOnly(DateTime selectedDate, bool isReadOnly)
+        {
             dataGridView = new DataGridView();
             dataGridView.Width = 360;
             dataGridView.Location = new Point(10, 120);
             dataGridView.ScrollBars = ScrollBars.Vertical;
             dataGridView.RowHeadersVisible = false;
 
-            dataGridView.CellClick+=DataGridView_CellClick;
+            dataGridView.CellClick += DataGridView_CellClick;
 
             DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
             column.DataPropertyName = "id";
@@ -123,24 +137,14 @@ namespace MyForm
 
             // Ereignis für das Befüllen der Zellen registrieren
             dataGridView.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridView_RowsAdded);
-            
+
             DateDao dateDao = new DateDao();
 
             dataGridView.AllowUserToAddRows = false;
-            dataGridView.ReadOnly = true;
+            dataGridView.ReadOnly = isReadOnly;
 
-            dataGridView.DataSource = dateDao.GetDataSetDates(selectedDate);
+            dataGridView.DataSource = dateDao.GetDataSetDatesForSelectedDate(selectedDate);
             dataGridView.DataMember = "dates";
-            
-            Controls.Add(dataGridView);
-
-            saveButton = new Button();
-            saveButton.Text = resourceManager.GetString("save / close");
-            saveButton.Location = new System.Drawing.Point(10, 370);
-            saveButton.Size = new System.Drawing.Size(100, 50);
-            saveButton.Click += new EventHandler(SaveButton_Click);
-            Controls.Add(saveButton);
-
         }
 
         private void DataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
