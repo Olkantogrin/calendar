@@ -40,9 +40,8 @@ namespace MyForm
         private void InitializeAppointmentControls()
         {
 
-
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(DetailsForm).Assembly);
-
+            
             //CreateDataGridViewWithReadOnly(id, true);
             //Controls.Add(dataGridView);
 
@@ -116,9 +115,7 @@ namespace MyForm
             saveButton.Click += new EventHandler(SaveButton_Click);
             Controls.Add(saveButton);
 
-
-            //Controls.Add(dataGridView);
-
+            
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -126,79 +123,51 @@ namespace MyForm
             Close();
         }
 
-        /*
-        private void CreateDataGridViewWithReadOnly(object id, bool isReadOnly)
-        {
-            dataGridView = new DataGridView();
-            dataGridView.Width = 360;
-            dataGridView.Location = new Point(10, 20);
-            dataGridView.ScrollBars = ScrollBars.Vertical;
-            dataGridView.RowHeadersVisible = false;
-
-            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "id";
-            column.Name = "id";
-            dataGridView.Columns.Add(column);
-
-            dataGridView.Columns["id"].Visible = false;
-
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "text";
-            column.Name = "text";
-            dataGridView.Columns.Add(column);
-
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "start";
-            column.Name = "start";
-            dataGridView.Columns.Add(column);
-
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "end";
-            column.Name = "end";
-            dataGridView.Columns.Add(column);
-
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "xColumn";
-            column.HeaderText = "";
-            dataGridView.Columns.Add(column);
-            
-            dataGridView.AllowUserToAddRows = false;
-            dataGridView.ReadOnly = isReadOnly;
-
-            DateDao dateDao = new DateDao();
-            //dataGridView.DataSource = dateDao.GetDataSetDatesForId(id);
-            dataGridView.DataMember = "dates";
-
-        }
-        */
+        
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(DetailsForm).Assembly);
             
-
             bool textChanged = textBoxDate.Text != originalText;
             bool startDateChanged = dateTimePickerStart.Value != originalStartDate;
             bool endDateChanged = dateTimePickerEnd.Value != originalEndDate;
 
             if (textChanged || startDateChanged || endDateChanged) {
 
-                DateDao dateDao = new DateDao();
+                Entry entry = Entry.Instance;
+                bool isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
 
-                dateDao.UpdateDateWithId(id, textBoxDate.Text, dateTimePickerStart.Value, dateTimePickerEnd.Value);
-
-                DataGridView dataGridView = appointmentForm.dataGridView;
-
-                // Durchlaufen der Zeilen in der DataGridView, um die entsprechende Zeile zu finden
-                foreach (DataGridViewRow row in dataGridView.Rows)
+                if (isCorrectEntries)
                 {
-                    if (row.Cells["id"].Value != null && row.Cells["id"].Value.Equals(id))
+
+                    DateDao dateDao = new DateDao();
+
+                    dateDao.UpdateDateWithId(id, textBoxDate.Text, dateTimePickerStart.Value, dateTimePickerEnd.Value);
+
+                    DataGridView dataGridView = appointmentForm.dataGridView;
+
+                    // Durchlaufen der Zeilen in der DataGridView, um die entsprechende Zeile zu finden
+                    foreach (DataGridViewRow row in dataGridView.Rows)
                     {
-                        //TODO Ändern der Hintergrundfarbe der gefundenen Zeile durch Ädern der Zeile ersetzen.
-                        row.DefaultCellStyle.BackColor = Color.Red;
-                        break; // Keine weitere Suche notwendig, sobald die Zeile gefunden wurde
+                        if (row.Cells["id"].Value != null && row.Cells["id"].Value.Equals(id))
+                        {
+                            row.DefaultCellStyle.BackColor = Color.Red;
+                            row.Cells["text"].Value = textBoxDate.Text;
+                            row.Cells["start"].Value = dateTimePickerStart.Value;
+                            row.Cells["end"].Value = dateTimePickerEnd.Value;
+                            break; // Keine weitere Suche notwendig, sobald die Zeile gefunden wurde
+                        }
                     }
+
+                    this.Close();
                 }
-                this.Close();
+                else {
+
+                    MessageBox.Show(resourceManager.GetString("The start date must be before the end date."));
+
+                }
+
 
             } else {
 

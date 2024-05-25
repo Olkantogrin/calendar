@@ -144,6 +144,9 @@
   <data name="starts within 10 minutes" xml:space="preserve">
     <value>starts within 10 minutes</value>
   </data>
+  <data name="The start date must be before the end date." xml:space="preserve">
+    <value>The start date must be before the end date.</value>
+  </data>
   <data name="update" xml:space="preserve">
     <value>update</value>
   </data>

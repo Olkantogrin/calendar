@@ -67,7 +67,7 @@ namespace MyForm
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
-            // Erstellen des Kontrollkästchens
+            // Erstellen des Kontrollkästchens TODO: Was ist, wenn hier die Speicherlogik angepasst wird?
             checkBoxAddToBoldedDates = new CheckBox
             {
                 Text = resourceManager.GetString("discard"),
@@ -305,7 +305,7 @@ namespace MyForm
                 }
                 else
                 {
-                    MessageBox.Show("Der Starttermin muss vor dem Endtermin sein.");
+                    MessageBox.Show("The start date must be before the end date.");
                         e.Cancel = true;
                     }
             }

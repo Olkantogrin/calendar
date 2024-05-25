@@ -219,12 +219,10 @@ namespace MyForm
         internal void UpdateDateWithId(object id, string text, DateTime dateTimeStart, DateTime dateTimeEnd)
         {
             string idd = id.ToString();
+            string updatedText = text;
             string start = dateTimeStart.ToString();
             string end = dateTimeEnd.ToString();
 
-            MessageBox.Show(idd);
-            MessageBox.Show(start);
-            MessageBox.Show(end);
 
             string pattern = @"(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}):\d{2}";
             string replacement = "$1";
@@ -232,9 +230,23 @@ namespace MyForm
             start = Regex.Replace(start, pattern, replacement);
             end = Regex.Replace(end, pattern, replacement);
 
-            //TODO: Hier Update in der DB machen.
+            
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
 
-            throw new NotImplementedException();
+                string sql = "UPDATE dates SET text = @updatedText, start = @start, end = @end WHERE id = @idd";
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@updatedText", updatedText);
+                    command.Parameters.AddWithValue("@start", start);
+                    command.Parameters.AddWithValue("@end", end);
+                    command.Parameters.AddWithValue("@idd", idd);
+
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         private int AdjustLastDay(int month, int day, int year)
