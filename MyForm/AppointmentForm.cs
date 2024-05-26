@@ -38,14 +38,15 @@ namespace MyForm
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
+        private Button closeButton;
         private Button saveButton;
 
         public DataGridView dataGridView;
 
-        private bool isCorrectEntries = false;
-
         DateTime selectedDateForUpDate;
 
+        private bool isCorrectEntries = false;
+        private bool closeButtonClicked = false;
 
         string locale = "de-DE";
 
@@ -63,20 +64,21 @@ namespace MyForm
             this.FormClosing += AppointmentForm_FormClosing;
 
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
-            CultureInfo ci = new CultureInfo(locale); 
+            CultureInfo ci = new CultureInfo(locale);
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
-            // Erstellen des Kontrollkästchens TODO: Was ist, wenn hier die Speicherlogik angepasst wird?
+            // Erstellen des Kontrollkästchens TODO: Was ist, wenn hier die Speicherlogik angepasst wird? Beim DAO noch connection.Close() reinschreiben.
             checkBoxAddToBoldedDates = new CheckBox
             {
                 Text = resourceManager.GetString("discard"),
-                Location = new Point(10, 10)
+                Location = new Point(10, 10),
+                Visible = false
             };
             Controls.Add(checkBoxAddToBoldedDates);
 
         }
-         
+
 
         private void InitializeGridView(DateTime selectedDate)
         {
@@ -89,13 +91,26 @@ namespace MyForm
 
             Controls.Add(dataGridView);
 
+            closeButton = new Button();
+            closeButton.Text = resourceManager.GetString("close");
+            closeButton.Location = new System.Drawing.Point(120, 370);
+            closeButton.Size = new System.Drawing.Size(100, 50);
+            closeButton.Click += new EventHandler(SaveButton_Click);
+            Controls.Add(closeButton);
+
             saveButton = new Button();
-            saveButton.Text = resourceManager.GetString("save / close");
+            saveButton.Text = resourceManager.GetString("save");
             saveButton.Location = new System.Drawing.Point(10, 370);
             saveButton.Size = new System.Drawing.Size(100, 50);
-            saveButton.Click += new EventHandler(SaveButton_Click);
+            saveButton.Click += new EventHandler(CloseButton_Click);
             Controls.Add(saveButton);
 
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            closeButtonClicked = true;
+            this.Close();
         }
 
         private void CreateDataGridViewWithReadOnly(DateTime selectedDate, bool isReadOnly)
@@ -184,8 +199,9 @@ namespace MyForm
                     checkBoxAddToBoldedDates.Checked = true;
                     Close();
                 }
-                else {
-                    
+                else
+                {
+
                     // Zugriff auf die aktuelle Reihe
                     DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
                     var id = row.Cells["id"].Value;
@@ -209,12 +225,12 @@ namespace MyForm
 
             comboBox = new ComboBox();
 
-            comboBox.Location = new Point(100, 10); // X, Y Koordinaten auf dem Formular
+            comboBox.Location = new Point(10, 10); // X, Y Koordinaten auf dem Formular
             comboBox.Size = new Size(125, 20); // Breite, Höhe
-            
+
             comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
-            comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m"); 
-            comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y"); 
+            comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m");
+            comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y");
 
             // Optional: Standardauswahl setzen
             comboBox.SelectedIndex = 0; // Wählt die erste Option "wöchentlich" als Standard
@@ -276,7 +292,7 @@ namespace MyForm
             SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
         }
 
-        
+
         public void SetAppointmentDetails(string selectedDate, TimeSpan startTime, TimeSpan endTime)
         {
             SelectedDate = selectedDate;
@@ -286,32 +302,38 @@ namespace MyForm
 
         private void AppointmentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!closeButtonClicked)
+            {
+                checkBoxAddToBoldedDates.Checked = true;
+            }
 
             if (!datePickerSelected && !checkBoxAddToBoldedDates.Checked)
             {
                 MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
                 e.Cancel = true; // Verhindert das Schließen des Formulars
             }
-            else { 
-
-            Entry entry = Entry.Instance;
-            isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
-
-            if (!checkBoxAddToBoldedDates.Checked)
+            else
             {
-                if (isCorrectEntries)
+
+                Entry entry = Entry.Instance;
+                isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
+
+                if (!checkBoxAddToBoldedDates.Checked)
                 {
-                    SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
+                    if (isCorrectEntries)
+                    {
+                        SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The start date must be before the end date.");
+                        e.Cancel = true;
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("The start date must be before the end date.");
-                        e.Cancel = true;
-                    }
-            }
-            else {
-                SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
-            }
+                    SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
+                }
                 SelectedRepetitionIndex = comboBox.SelectedIndex;
             }
         }

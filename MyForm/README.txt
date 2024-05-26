@@ -6,9 +6,3 @@ Man hat nach dem Auswählen die Wahl: Wenn das Kästchen "verwerfen" geklickt wi
 schließen, und der Termin wird nicht abgespeichert. Wenn man dieses Kästchen nicht klickt, dann
 wird der Termin beim Schließen des Fensters abgespeichert. 
 
--------------------------------------------------------------------------------------------------------------------
-
-Eine Detailansicht (in Verbindung mit einem Feld Notizen) für die Termine umsetzen (durch Klicken).
-
-Wöchentliches Wiederholen eines Termins auch - da muss man dann aber alle Termine im Monat in die DB-Tabelle
-schreiben o. ä.

@@ -138,8 +138,8 @@
   <data name="read file" xml:space="preserve">
     <value>read file</value>
   </data>
-  <data name="save / close" xml:space="preserve">
-    <value>save / close</value>
+  <data name="save" xml:space="preserve">
+    <value>save</value>
   </data>
   <data name="starts within 10 minutes" xml:space="preserve">
     <value>starts within 10 minutes</value>

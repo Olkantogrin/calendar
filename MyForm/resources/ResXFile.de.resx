@@ -138,8 +138,8 @@
   <data name="read file" xml:space="preserve">
     <value>Datei einlesen</value>
   </data>
-  <data name="save / close" xml:space="preserve">
-    <value>speichern / schließen</value>
+  <data name="save" xml:space="preserve">
+    <value>speichern</value>
   </data>
   <data name="starts within 10 minutes" xml:space="preserve">
     <value>beginnt in 10 Minuten</value>
