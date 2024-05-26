@@ -311,6 +311,7 @@ namespace MyForm
             {
                 MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
                 e.Cancel = true; // Verhindert das Schließen des Formulars
+                checkBoxAddToBoldedDates.Checked = true;
             }
             else
             {
