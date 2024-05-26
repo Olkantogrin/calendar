@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Data.SQLite;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MyForm
+namespace MyForm //TODO: connections auch schließen (close())
 {
     public class DateDao
     {
