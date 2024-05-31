@@ -156,4 +156,10 @@
   <data name="weekly repetition" xml:space="preserve">
     <value>weekly repetition</value>
   </data>
+  <data name="whole day" xml:space="preserve">
+    <value>whole day</value>
+  </data>
+  <data name="contacts" xml:space="preserve">
+    <value>contacts</value>
+  </data>
 </root>

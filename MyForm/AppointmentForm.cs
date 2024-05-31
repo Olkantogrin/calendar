@@ -35,6 +35,7 @@ namespace MyForm
 
         private CheckBox checkBoxAddToBoldedDates;
         private ComboBox comboBox;
+        private CheckBox wholeDay;
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
@@ -224,9 +225,18 @@ namespace MyForm
             Thread.CurrentThread.CurrentUICulture = ci;
 
             comboBox = new ComboBox();
-
             comboBox.Location = new Point(10, 10); // X, Y Koordinaten auf dem Formular
             comboBox.Size = new Size(125, 20); // Breite, Höhe
+
+            wholeDay = new CheckBox();
+            wholeDay.Location = new Point(200, 10);
+            wholeDay.CheckedChanged += new EventHandler(WholeDay_CheckedChanged); 
+            this.Controls.Add(wholeDay);
+
+            Label wholeDayLabel = new Label();
+            wholeDayLabel.Text = resourceManager.GetString("whole day");
+            wholeDayLabel.Location = new Point(140, 12);
+            this.Controls.Add(wholeDayLabel);
 
             comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
             comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m");
@@ -270,8 +280,35 @@ namespace MyForm
 
             this.FormClosed += AppointmentForm_FormClosed;
 
-
+            UpdateDatePickerWholeDay();
         }
+
+        private void WholeDay_CheckedChanged(object sender, EventArgs e) 
+        {
+            UpdateDatePickerWholeDay();
+        }
+
+
+        private void UpdateDatePickerWholeDay() 
+        {
+            bool isCheckedWholeDay = wholeDay.Checked;
+            if (isCheckedWholeDay) {
+
+                DateTime currentDate = dateTimePickerStart.Value;
+                int newHour = 00; 
+                int newMinute = 00;
+                DateTime newDateTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, newHour, newMinute, 0);
+                dateTimePickerStart.Value = newDateTime;
+
+                currentDate = dateTimePickerStart.Value;
+                newHour = 23;
+                newMinute = 59;
+                newDateTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, newHour, newMinute, 0);
+                dateTimePickerEnd.Value = newDateTime;
+
+            }
+        }
+
 
         private void DatePicker_ValueChanged(object sender, EventArgs e)
         {

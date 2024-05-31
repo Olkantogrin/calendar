@@ -176,23 +176,18 @@ namespace MyForm
                 }
                 else if ("w".Equals(d.Repeat)) {
 
-                    //TODO: Das eben bis zu viermal... Dann ganztägiges Ereignis.
                     // Gegebenes Datum als string
                     string dateStringS = d.Start; string dateStringE = d.End;
 
-                    // Konvertiere string in DateTime-Objekt
                     DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
                     DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                    // Bestimme das Ende des aktuellen Monats
                     DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
 
-                    // Liste, um alle Termine zu speichern
                     var weeklyDatesThisMonth = new List<DateTime>();
 
-                    // Füge das Startdatum hinzu
                     weeklyDatesThisMonth.Add(startDate);
-                    // Berechne alle wöchentlichen Termine bis zum Monatsende
+
                     DateTime currentDate = endDate;
                     while (currentDate < endOfMonth)
                     {

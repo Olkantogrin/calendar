@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
@@ -86,7 +85,23 @@ namespace MyForm
 
             // Registriere das Click-Ereignis
             readerButtonICS.Click += ReadButton_ClickICS;
-            
+
+            Button contactsButton = new Button
+            {
+                Text = resourceManager.GetString("contacts"),
+                Location = new System.Drawing.Point(170, 174),
+                Size = new System.Drawing.Size(100, 25)
+            };
+
+            this.Controls.Add(contactsButton);
+
+            contactsButton.Click += ContactButton_Click;
+
+        }
+
+        private void ContactButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("huhu");
         }
 
         private void ReadButton_ClickICS(object sender, EventArgs e)
