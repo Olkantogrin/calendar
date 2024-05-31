@@ -352,6 +352,12 @@ namespace MyForm
                     {
                         repetitionType = "y"; // Jährliche Wiederholung
                     }
+                    else if (selectedRepetitionIndex == 3)
+                    {
+                        repetitionType = "w"; // wöchentliche Wiederholung
+                    }
+
+
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
                     List<Date> datelist = new List<Date>();

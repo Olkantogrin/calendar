@@ -153,4 +153,7 @@
   <data name="yearly repetition" xml:space="preserve">
     <value>ежегодно</value>
   </data>
+  <data name="weekly repetition" xml:space="preserve">
+    <value>еженедельник</value>
+  </data>
 </root>

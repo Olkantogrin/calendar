@@ -153,4 +153,7 @@
   <data name="yearly repetition" xml:space="preserve">
     <value>yearly repetition</value>
   </data>
+  <data name="weekly repetition" xml:space="preserve">
+    <value>weekly repetition</value>
+  </data>
 </root>

@@ -68,7 +68,7 @@ namespace MyForm
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
-            // Erstellen des Kontrollkästchens TODO: Was ist, wenn hier die Speicherlogik angepasst wird? Beim DAO noch connection.Close() reinschreiben.
+            
             checkBoxAddToBoldedDates = new CheckBox
             {
                 Text = resourceManager.GetString("discard"),
@@ -231,6 +231,7 @@ namespace MyForm
             comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
             comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m");
             comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y");
+            comboBox.Items.Add(resourceManager.GetString("weekly repetition") + " w");
 
             // Optional: Standardauswahl setzen
             comboBox.SelectedIndex = 0; // Wählt die erste Option "wöchentlich" als Standard

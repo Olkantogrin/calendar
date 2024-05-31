@@ -1,5 +1,8 @@
 ﻿namespace MyForm
 {
+
+
+   
     public class Date
     {
         private string text;

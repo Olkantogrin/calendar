@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
-namespace MyForm //TODO: connections auch schließen (close())
+namespace MyForm 
 {
     public class DateDao
     {
@@ -27,6 +28,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
 
@@ -70,6 +72,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     }
                 }
+                connection.Close();
             }
 
             Span span = new Span();
@@ -117,6 +120,7 @@ namespace MyForm //TODO: connections auch schließen (close())
                         
                     }
                 }
+                connection.Close();
             }
 
             Span span = new Span();
@@ -145,7 +149,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     // Die kommt dazu.
                     DateTime updatedDateEnd = updatedDateStart.Add(difference);
-                    
+
                     string updatedStart = updatedDateStart.ToString();
                     string updatedEnd = updatedDateEnd.ToString();
 
@@ -164,55 +168,108 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     datesresult.Add(d);
                 }
-                
+
                 else if ("m".Equals(d.Repeat))
                 {
-                    
-                    CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
-                    DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
-                    DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+                    SaveMonthly(month, datesresult, d);
 
-                    DateTime updatedDateStart = new DateTime(parsedDateStart.Year, month, AdjustLastDay(month, parsedDateStart.Day, parsedDateStart.Year), parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+                }
+                else if ("w".Equals(d.Repeat)) {
 
-                    TimeSpan difference = parsedDateEnd - parsedDateStart;
+                    //TODO: Das eben bis zu viermal... Dann ganztägiges Ereignis.
+                    // Gegebenes Datum als string
+                    string dateStringS = d.Start; string dateStringE = d.End;
 
-                    DateTime updatedDateEnd = updatedDateStart.Add(difference);
+                    // Konvertiere string in DateTime-Objekt
+                    DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+                    DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                    if (updatedDateStart.Month >= parsedDateStart.Month) {
+                    // Bestimme das Ende des aktuellen Monats
+                    DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
 
-                        string updatedStart = updatedDateStart.ToString();
-                        string updatedEnd = updatedDateEnd.ToString();
+                    // Liste, um alle Termine zu speichern
+                    var weeklyDatesThisMonth = new List<DateTime>();
 
-                        if (updatedStart.Length > 3)
+                    // Füge das Startdatum hinzu
+                    weeklyDatesThisMonth.Add(startDate);
+                    // Berechne alle wöchentlichen Termine bis zum Monatsende
+                    DateTime currentDate = endDate;
+                    while (currentDate < endOfMonth)
+                    {
+                        currentDate = currentDate.AddDays(7);
+                        if (currentDate <= endOfMonth)
                         {
-                            updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
+                            weeklyDatesThisMonth.Add(currentDate);
                         }
+                    }
 
-                        if (updatedEnd.Length > 3)
-                        {
-                            updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
-                        }
+                    List<Date> thisMonthWeekly = new List<Date>();
+                    // Speicherung aller wöchentlichen Termine diesen Monat 
+                    DateTime weeklystart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+                    foreach (DateTime dt in weeklyDatesThisMonth)
+                    {
+                      
 
-                        d.Start = updatedStart;
-                        d.End = updatedEnd;
+                       Date dweekly = new Date(d.Text, weeklystart.ToString("dd.mm.yyyy HH:mm"), dt.ToString("dd.mm.yyyy HH:mm"), "w");
+                       weeklystart = weeklystart.AddDays(7);
 
-                        datesresult.Add(d);
-
-
+                       thisMonthWeekly.Add(dweekly);
+                       
 
                     }
-                     
+
+                    foreach (Date dwkly in thisMonthWeekly) {
+                        SaveMonthly(month, datesresult, dwkly);
+                    }
                 }
 
                 else
                 {
-                     
+
                     datesresult.Add(d);
 
                 }
             }
 
             return datesresult;
+        }
+
+        private void SaveMonthly(int month, List<Date> datesresult, Date d)
+        {
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+            DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+            DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+
+            DateTime updatedDateStart = new DateTime(parsedDateStart.Year, month, AdjustLastDay(month, parsedDateStart.Day, parsedDateStart.Year), parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+
+            TimeSpan difference = parsedDateEnd - parsedDateStart;
+
+            DateTime updatedDateEnd = updatedDateStart.Add(difference);
+
+            if (updatedDateStart.Month >= parsedDateStart.Month)
+            {
+
+                string updatedStart = updatedDateStart.ToString();
+                string updatedEnd = updatedDateEnd.ToString();
+
+                if (updatedStart.Length > 3)
+                {
+                    updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
+                }
+
+                if (updatedEnd.Length > 3)
+                {
+                    updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
+                }
+
+                d.Start = updatedStart;
+                d.End = updatedEnd;
+
+                datesresult.Add(d);
+
+
+
+            }
         }
 
         internal void UpdateDateWithId(object id, string text, DateTime dateTimeStart, DateTime dateTimeEnd)
@@ -245,6 +302,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
 
@@ -320,6 +378,8 @@ namespace MyForm //TODO: connections auch schließen (close())
                     }
                 }
 
+                connection.Close();
+
                 return l;
             }
         }
@@ -355,6 +415,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     }
                 }
+                connection.Close();
             }
 
             return d;
@@ -393,6 +454,7 @@ namespace MyForm //TODO: connections auch schließen (close())
                         dataSet.Tables.Add(dataTable);
                     }
                 }
+                connection.Close();
             }
 
 
@@ -414,6 +476,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
 
         }
@@ -432,6 +495,7 @@ namespace MyForm //TODO: connections auch schließen (close())
 
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
 
@@ -452,6 +516,7 @@ namespace MyForm //TODO: connections auch schließen (close())
                     command.Parameters.AddWithValue("@id", id);
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
     }
