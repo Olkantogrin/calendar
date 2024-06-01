@@ -386,8 +386,7 @@ namespace MyForm
 
                         DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
 
-                        //TODO: Und wenn ich das nicht nur in dem Monat haben will? Siehe auch Methode oben...
-                        Console.WriteLine("=============START=================");
+                        //TODO: Und wenn ich das bis Jahresende haben will? Siehe anderes TODO.
                         monthCalendar.AddBoldedDate(startDate);
 
                         DateTime currentDate = endDate;
@@ -399,7 +398,6 @@ namespace MyForm
                                 monthCalendar.AddBoldedDate(currentDate);
                             }
                         }
-                        Console.WriteLine("=============END=================");
                         monthCalendar.UpdateBoldedDates();
                     }
                     else { 

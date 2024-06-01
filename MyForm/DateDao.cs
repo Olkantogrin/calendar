@@ -33,7 +33,6 @@ namespace MyForm
             }
         }
 
-        
         public List<DateTime> GetSelectedDatesForMonthAndYear(int month, int year)
         {
             List<Date> dates = new List<Date>();
@@ -65,14 +64,42 @@ namespace MyForm
                             Date d = new Date(text, start, end, repeat);
 
                             dates.Add(d);
-
                         }
-                        
-                        //TODO: Für die repeat = "w" hier diese Liste erweitern.
 
+                        //TODO: Und wenn ich das bis Jahresende haben will? Siehe anderes TODO. 
+                        CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+                        List<Date> newDates = new List<Date>();
+
+                        foreach (Date ddd in dates)
+                        {
+                            if ("w".Equals(ddd.Repeat))
+                            {
+                                string startDate = ddd.Start;
+                                string endDate = ddd.End;
+
+                                DateTime currentDateS = DateTime.ParseExact(startDate, "dd.MM.yyyy HH:mm", culture);
+                                DateTime currentDate = DateTime.ParseExact(endDate, "dd.MM.yyyy HH:mm", culture);
+
+                                DateTime endOfMonth = new DateTime(currentDateS.Year, currentDateS.Month, DateTime.DaysInMonth(currentDateS.Year, currentDateS.Month), 23, 59, 59);
+
+                                while (currentDate < endOfMonth)
+                                {
+                                    currentDateS = currentDateS.AddDays(7);
+                                    currentDate = currentDate.AddDays(7);
+                                    if (currentDate <= endOfMonth)
+                                    {
+                                        string start = currentDateS.ToString();
+                                        string end = currentDate.ToString();
+
+                                        Date d = new Date(ddd.Text, start.Substring(0, start.Length - 3), end.Substring(0, end.Length - 3), "w");
+                                        newDates.Add(d);
+                                    }
+                                }
+                            }
+                        }
+
+                        dates.AddRange(newDates);
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
- 
-
                     }
                 }
                 connection.Close();
@@ -82,6 +109,7 @@ namespace MyForm
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
             return selectedDates;
         }
+
 
 
 
