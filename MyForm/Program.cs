@@ -14,6 +14,7 @@ namespace MyForm
         private Font boldDateFont;
         private DateTime selectedDate;
         private AppointmentForm appointmentForm;
+        private ContactForm contactForm;
         private DateTime previousDate;
         
         private ComboBox dropdownList;
@@ -101,7 +102,16 @@ namespace MyForm
 
         private void ContactButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("huhu");
+            if (contactForm == null || contactForm.IsDisposed)
+            {
+                contactForm = new ContactForm(locale);
+                contactForm.Show();
+
+            }
+            else
+            {
+                contactForm.Focus();
+            }
         }
 
         private void ReadButton_ClickICS(object sender, EventArgs e)
@@ -384,16 +394,17 @@ namespace MyForm
                         DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
                         DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                        DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
+                        //DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
+                        DateTime endOfYear = new DateTime(startDate.Year, 12, DateTime.DaysInMonth(startDate.Year, 12), 23, 59, 59);
 
-                        //TODO: Und wenn ich das bis Jahresende haben will? Siehe anderes TODO.
+                        //TODO: Bis Jahresende scheint zu funktionieren. Testen, siehe anderes TODO.
                         monthCalendar.AddBoldedDate(startDate);
 
                         DateTime currentDate = endDate;
-                        while (currentDate < endOfMonth)
+                        while (currentDate < endOfYear)
                         {
                             currentDate = currentDate.AddDays(7);
-                            if (currentDate <= endOfMonth)
+                            if (currentDate <= endOfYear)
                             {
                                 monthCalendar.AddBoldedDate(currentDate);
                             }

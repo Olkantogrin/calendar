@@ -66,7 +66,7 @@ namespace MyForm
                             dates.Add(d);
                         }
 
-                        //TODO: Und wenn ich das bis Jahresende haben will? Siehe anderes TODO. 
+                        //TODO: Dis Jahresende scheint zu funktionieren. TODO: Testen. 
                         CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                         List<Date> newDates = new List<Date>();
 
@@ -80,13 +80,14 @@ namespace MyForm
                                 DateTime currentDateS = DateTime.ParseExact(startDate, "dd.MM.yyyy HH:mm", culture);
                                 DateTime currentDate = DateTime.ParseExact(endDate, "dd.MM.yyyy HH:mm", culture);
 
-                                DateTime endOfMonth = new DateTime(currentDateS.Year, currentDateS.Month, DateTime.DaysInMonth(currentDateS.Year, currentDateS.Month), 23, 59, 59);
+                                //DateTime endOfMonth = new DateTime(currentDateS.Year, currentDateS.Month, DateTime.DaysInMonth(currentDateS.Year, currentDateS.Month), 23, 59, 59);
+                                DateTime endOfYear = new DateTime(currentDateS.Year, 12, DateTime.DaysInMonth(currentDateS.Year, 12), 23, 59, 59);
 
-                                while (currentDate < endOfMonth)
+                                while (currentDate < endOfYear)
                                 {
                                     currentDateS = currentDateS.AddDays(7);
                                     currentDate = currentDate.AddDays(7);
-                                    if (currentDate <= endOfMonth)
+                                    if (currentDate <= endOfYear)
                                     {
                                         string start = currentDateS.ToString();
                                         string end = currentDate.ToString();
