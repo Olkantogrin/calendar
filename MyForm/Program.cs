@@ -375,8 +375,38 @@ namespace MyForm
 
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
+
+                    if ("w".Equals(repetitionType))
+                    {
+                        
+                        string dateStringS = d.Start; string dateStringE = d.End;
+
+                        DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+                        DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+
+                        DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
+
+                        //TODO: Und wenn ich das nicht nur in dem Monat haben will? Siehe auch Methode oben...
+                        Console.WriteLine("=============START=================");
+                        monthCalendar.AddBoldedDate(startDate);
+
+                        DateTime currentDate = endDate;
+                        while (currentDate < endOfMonth)
+                        {
+                            currentDate = currentDate.AddDays(7);
+                            if (currentDate <= endOfMonth)
+                            {
+                                monthCalendar.AddBoldedDate(currentDate);
+                            }
+                        }
+                        Console.WriteLine("=============END=================");
+                        monthCalendar.UpdateBoldedDates();
+                    }
+                    else { 
+
                     List<Date> datelist = new List<Date>();
                     datelist.Add(d);
+
                     Span span = new Span();
 
                     List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(datelist);
@@ -387,9 +417,11 @@ namespace MyForm
                     }
                     monthCalendar.UpdateBoldedDates();
 
+                    }
 
                     DateDao dateDao = new DateDao();
                     dateDao.SaveAppointment(d);
+                
                 }
             }
 

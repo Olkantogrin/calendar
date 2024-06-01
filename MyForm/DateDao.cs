@@ -10,6 +10,7 @@ namespace MyForm
 {
     public class DateDao
     {
+        
 
         public void SaveAppointment(Date date)
         {
@@ -67,6 +68,8 @@ namespace MyForm
 
                         }
                         
+                        //TODO: Für die repeat = "w" hier diese Liste erweitern.
+
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
  
 
@@ -174,49 +177,6 @@ namespace MyForm
                     SaveMonthly(month, datesresult, d);
 
                 }
-                else if ("w".Equals(d.Repeat)) {
-
-                    // Gegebenes Datum als string
-                    string dateStringS = d.Start; string dateStringE = d.End;
-
-                    DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-                    DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-
-                    DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
-
-                    var weeklyDatesThisMonth = new List<DateTime>();
-
-                    weeklyDatesThisMonth.Add(startDate);
-
-                    DateTime currentDate = endDate;
-                    while (currentDate < endOfMonth)
-                    {
-                        currentDate = currentDate.AddDays(7);
-                        if (currentDate <= endOfMonth)
-                        {
-                            weeklyDatesThisMonth.Add(currentDate);
-                        }
-                    }
-
-                    List<Date> thisMonthWeekly = new List<Date>();
-                    // Speicherung aller wöchentlichen Termine diesen Monat 
-                    DateTime weeklystart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-                    foreach (DateTime dt in weeklyDatesThisMonth)
-                    {
-                      
-
-                       Date dweekly = new Date(d.Text, weeklystart.ToString("dd.mm.yyyy HH:mm"), dt.ToString("dd.mm.yyyy HH:mm"), "w");
-                       weeklystart = weeklystart.AddDays(7);
-
-                       thisMonthWeekly.Add(dweekly);
-                       
-
-                    }
-
-                    foreach (Date dwkly in thisMonthWeekly) {
-                        SaveMonthly(month, datesresult, dwkly);
-                    }
-                }
 
                 else
                 {
@@ -228,6 +188,8 @@ namespace MyForm
 
             return datesresult;
         }
+
+        
 
         private void SaveMonthly(int month, List<Date> datesresult, Date d)
         {
