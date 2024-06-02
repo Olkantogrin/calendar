@@ -10,8 +10,6 @@ namespace MyForm
 {
     public class DateDao
     {
-        
-
         public void SaveAppointment(Date date)
         {
             string connectionString = "Data Source=cal.db;Version=3;";

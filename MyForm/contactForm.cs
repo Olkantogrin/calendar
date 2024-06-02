@@ -4,7 +4,7 @@ using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace MyForm //TODO: Feiertage markieren.
+namespace MyForm
 {
     public class ContactForm : Form
     {
@@ -33,7 +33,7 @@ namespace MyForm //TODO: Feiertage markieren.
             this.Width = 500;
         }
 
-        private void InitializeContactControls()
+        public void InitializeContactControls()
         {
 
             Controls.Remove(dataGridView);
@@ -82,7 +82,6 @@ namespace MyForm //TODO: Feiertage markieren.
             dataGridView.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridView_RowsAdded);
 
             ContactDao contactDao = new ContactDao();
-
             dataGridView.DataSource = contactDao.GetContacts();
             dataGridView.DataMember = "contacts";
 
@@ -119,7 +118,7 @@ namespace MyForm //TODO: Feiertage markieren.
                     DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
                     var id = row.Cells["id"].Value;
 
-                    ContactsEditForm contactsEditForm = new ContactsEditForm(id, this);
+                    ContactsEditForm contactsEditForm = new ContactsEditForm(id, loc, this);
                     contactsEditForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
 
 

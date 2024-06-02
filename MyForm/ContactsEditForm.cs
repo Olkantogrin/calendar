@@ -1,17 +1,70 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Drawing;
+using System.Globalization;
+using System.Resources;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace MyForm
 {
     public class ContactsEditForm : Form
     {
         private object id;
+        private string loc;
+        private CheckBox updateCheckBox;
         private ContactForm contactForm;
 
+        TextBox textBox;
+        string txt;
 
-        public ContactsEditForm(object id, ContactForm contactForm)
+        public ContactsEditForm(object id, string loc, ContactForm contactForm)
         {
             this.id = id;
+            this.loc = loc;
             this.contactForm = contactForm;
+
+            InitializeContactControls(id, contactForm);
+
+            this.FormClosed += new FormClosedEventHandler(MyForm_FormClosed);
+
+        }
+
+        private void InitializeContactControls(object id, ContactForm contactForm)
+        {
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(loc);
+            Thread.CurrentThread.CurrentCulture = ci;
+
+
+            textBox = new TextBox();
+
+            textBox.Location = new Point(10, 10); // X, Y Koordinaten auf der Form
+            textBox.Size = new Size(200, 20); // Breite, Höhe des Textfeldes
+
+            ContactDao contactDao = new ContactDao();
+            txt = contactDao.GetEntryForId(id.ToString());
+
+            textBox.Text = txt;
+
+            Controls.Add(textBox);
+
+            updateCheckBox = new CheckBox
+            {
+                Location = new Point(10, 40), // Position below the TextBox
+                Size = new Size(200, 20),
+                Text = resourceManager.GetString("update")
+            };
+
+            Controls.Add(updateCheckBox);
+        }
+
+        private void MyForm_FormClosed(object sender, FormClosedEventArgs e)
+        {   string newText = textBox.Text;
+            if (!txt.Equals(newText) && updateCheckBox.Checked == true) {
+                ContactDao contactDao = new ContactDao();
+                contactDao.UpdateContactForId(id.ToString(), newText);
+                contactForm.InitializeContactControls();
+            }
         }
     }
 }
