@@ -43,6 +43,7 @@ namespace MyForm
         private Button saveButton;
 
         public DataGridView dataGridView;
+        private DataGridView dataGridViewC;
 
         DateTime selectedDateForUpDate;
 
@@ -92,6 +93,8 @@ namespace MyForm
 
             Controls.Add(dataGridView);
 
+            CreateDataGridViewContacts();
+
             closeButton = new Button();
             closeButton.Text = resourceManager.GetString("close");
             closeButton.Location = new System.Drawing.Point(120, 370);
@@ -106,6 +109,55 @@ namespace MyForm
             saveButton.Click += new EventHandler(CloseButton_Click);
             Controls.Add(saveButton);
 
+        }
+
+        private void CreateDataGridViewContacts()
+        {
+            dataGridViewC = new DataGridView();
+            dataGridViewC.Location = new System.Drawing.Point(380, 70);
+            dataGridViewC.Size = new System.Drawing.Size(400, 300);
+
+            dataGridViewC.ScrollBars = ScrollBars.Vertical;
+            dataGridViewC.AllowUserToAddRows = false;
+            dataGridViewC.ReadOnly = true;
+            dataGridViewC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "id";
+            column.Name = "id";
+            dataGridViewC.Columns.Add(column);
+
+            dataGridViewC.Columns["id"].Visible = false;
+
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "name";
+            column.Name = "name";
+            dataGridViewC.Columns.Add(column);
+
+            column = new DataGridViewTextBoxColumn();
+            column.Name = "xColumn";
+            column.HeaderText = "";
+            dataGridViewC.Columns.Add(column);
+
+            dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
+
+            ContactDao contactDao = new ContactDao();
+
+            dataGridViewC.DataSource = contactDao.GetContacts();
+            dataGridViewC.DataMember = "contacts";
+
+            Controls.Add(dataGridViewC);
+        }
+
+        private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+           
+                for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+                {
+                    // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
+                    dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
+                }
+            
         }
 
         private void CloseButton_Click(object sender, EventArgs e)
@@ -257,6 +309,7 @@ namespace MyForm
             Controls.Add(textBoxDate);
 
             // DateTimePicker für die Anfangsuhrzeit
+            /*
             dateTimePickerStart = new DateTimePicker
             {
                 Format = DateTimePickerFormat.Time,
@@ -265,6 +318,7 @@ namespace MyForm
                 Width = 100
             };
             Controls.Add(dateTimePickerStart);
+             
 
             // DateTimePicker für die Enduhrzeit
             dateTimePickerEnd = new DateTimePicker
@@ -273,6 +327,20 @@ namespace MyForm
                 Location = new Point(120, 70),
                 Width = 100
             };
+            Controls.Add(dateTimePickerEnd);
+            */
+
+            dateTimePickerStart = new DateTimePicker();
+            dateTimePickerStart.Format = DateTimePickerFormat.Custom;
+            dateTimePickerStart.CustomFormat = "dd.MM.yyyy HH:mm";
+            dateTimePickerStart.Location = new Point(10, 70);
+
+            dateTimePickerEnd = new DateTimePicker();
+            dateTimePickerEnd.Format = DateTimePickerFormat.Custom;
+            dateTimePickerEnd.CustomFormat = "dd.MM.yyyy HH:mm";
+            dateTimePickerEnd.Location = new Point(10, 95);
+
+            Controls.Add(dateTimePickerStart);
             Controls.Add(dateTimePickerEnd);
 
             dateTimePickerStart.ValueChanged += DatePicker_ValueChanged;

@@ -13,8 +13,12 @@ namespace MyForm.reader
         {
             int ret = -1;
 
-            if ("ICS".Equals(dateReaderType) && path.EndsWith("ics")) {
-               ret = ClientCode(new SpecificReaderICS(), path);
+            if ("ICS".Equals(dateReaderType) && path.EndsWith("ics"))
+            {
+                ret = ClientCode(new SpecificReaderICS(), path);
+            }
+            else {
+                MessageBox.Show("ERROR");
             }
 
             return ret;
