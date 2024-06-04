@@ -5,6 +5,8 @@ using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Linq;
+
 
 namespace MyForm 
 {
@@ -405,47 +407,6 @@ namespace MyForm
             return d;
         }
 
-        public DataSet GetDataSetDatesForSelectedDate(DateTime selectedDate)
-        {
-
-            string day = selectedDate.Day.ToString("D2");
-            string month = selectedDate.Month.ToString("D2");
-            string year = selectedDate.Year.ToString("D4");
-
-            string selectedDay = day + "." + month + "." + year + " 22:47";
-           
-            string connectionString = "Data Source=cal.db;Version=3;";
-
-            DataSet dataSet = new DataSet();
-
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-
-                //string sql = $"SELECT * FROM dates WHERE '{selectedDay}' BETWEEN start AND end";
-                string sql = $"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE)";
-
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@selectedDay", selectedDay);
-
-                    using (SQLiteDataReader reader = command.ExecuteReader())
-                    {
-                        // Erstellen eines DataTable, um die Daten zu speichern
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(reader); // Laden Sie die Daten direkt aus dem Reader in das DataTable
-
-                        dataSet.Tables.Add(dataTable);
-                    }
-                }
-                connection.Close();
-            }
-
-
-
-            return dataSet;
-        }
-
         public void UpdateLocale(string locale)
         {
             string connectionString = "Data Source=cal.db;Version=3;";
@@ -453,7 +414,7 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = "UPDATE language SET locale = @locale"; 
+                string sql = "UPDATE language SET locale = @locale";
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@locale", locale);
@@ -464,6 +425,54 @@ namespace MyForm
             }
 
         }
+
+
+        
+        public DataSet GetDataSetDatesForSelectedDate(DateTime selectedDate)
+        {
+
+            string day = selectedDate.Day.ToString("D2");
+            string month = selectedDate.Month.ToString("D2");
+            string year = selectedDate.Year.ToString("D4");
+
+            string selectedDay = day + "." + month + "." + year + " 00:00";
+           
+            string connectionString = "Data Source=cal.db;Version=3;";
+
+            DataSet dataSet = new DataSet();
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                //string sql = $"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE)";
+                //TODO: Das für die Monate ausweiten...
+                string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0)";
+
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@selectedDay", selectedDay);
+
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        DataTable dataTable = new DataTable();
+                        dataTable.Load(reader); 
+
+                        dataSet.Tables.Add(dataTable);
+                    }
+                }
+                connection.Close();
+            }
+
+
+
+                return dataSet;
+        }
+        
+
+
+
+
 
         public void SetLocale(string locale)
         {

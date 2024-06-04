@@ -397,7 +397,6 @@ namespace MyForm
                         //DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
                         DateTime endOfYear = new DateTime(startDate.Year, 12, DateTime.DaysInMonth(startDate.Year, 12), 23, 59, 59);
 
-                        //TODO: Bis Jahresende scheint zu funktionieren. Testen, siehe anderes TODO.
                         monthCalendar.AddBoldedDate(startDate);
 
                         DateTime currentDate = endDate;
