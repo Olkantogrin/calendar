@@ -446,8 +446,10 @@ namespace MyForm
                 connection.Open();
 
                 //string sql = $"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE)";
-                //TODO: Das für die Monate ausweiten...
-                string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0)";
+                //TODO: Das für die Monate ausweiten...:
+                string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0) OR repeat = 'm' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) >= 1) AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) <= 12)";
+                //...da das nur für die Wochen war.
+                //string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0)";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
