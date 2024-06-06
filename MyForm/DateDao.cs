@@ -66,7 +66,6 @@ namespace MyForm
                             dates.Add(d);
                         }
 
-                        //TODO: Dis Jahresende scheint zu funktionieren. TODO: Testen. 
                         CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                         List<Date> newDates = new List<Date>();
 
@@ -444,9 +443,8 @@ namespace MyForm
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-
-                //string sql = $"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE)";
-                //TODO: Das für die Monate ausweiten...:
+                
+                //Das habe ich für Monate ausgeweitet...:
                 string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0) OR repeat = 'm' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) >= 1) AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) <= 12)";
                 //...da das nur für die Wochen war.
                 //string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0)";
