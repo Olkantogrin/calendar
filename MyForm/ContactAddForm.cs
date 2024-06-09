@@ -10,8 +10,7 @@ using System.Windows.Forms;
 
                   
 
-namespace MyForm //TODO: Ich muss programmieren, dass ich verhindere, dass
-                 //die AppointmentForm und die ContactForm sich gleichzietig öffnen lassen und die DatePicker nachbessern.
+namespace MyForm 
 {    
     public partial class ContactAddForm : Form
     {

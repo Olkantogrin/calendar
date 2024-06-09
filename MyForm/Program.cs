@@ -105,6 +105,7 @@ namespace MyForm
             if (contactForm == null || contactForm.IsDisposed)
             {
                 contactForm = new ContactForm(locale);
+                if (appointmentForm != null) { appointmentForm.Close(); } 
                 contactForm.Show();
 
             }
@@ -189,10 +190,11 @@ namespace MyForm
                         foreach (DateTime dateTime in entry.Value)
                         {
 
-                            DateTime tenMinutesAhead = DateTime.Now.AddMinutes(10);
+                            //DateTime tenMinutesAhead = DateTime.Now.AddMinutes(10);
                             DateTime zeroMinutesAhead = DateTime.Now;
 
-                            bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
+                            bool alert = (zeroMinutesAhead - dateTime).Duration() <= TimeSpan.FromMinutes(10);
+                            //bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
 
                             if (alert)
                             {  
@@ -287,6 +289,7 @@ namespace MyForm
                 // Öffnen des AppointmentForm-Formulars
                 appointmentForm = new AppointmentForm(monthCalendar.SelectionStart, locale);
                 appointmentForm.FormClosed += AppointmentForm_FormClosed;
+                if (contactForm!=null) { contactForm.Close(); } 
                 appointmentForm.Show();
 
             }
