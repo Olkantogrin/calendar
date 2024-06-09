@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace MyForm
 {
-    public class ContactForm : Form
+    public class ContactsForm : Form
     {
         private Button addButton;
         private DataGridView dataGridView;
@@ -14,7 +14,7 @@ namespace MyForm
         private string loc;
         ResourceManager resourceManager;
 
-        public ContactForm(string locale)
+        public ContactsForm(string locale)
         {
             this.loc = locale;
 
@@ -90,7 +90,7 @@ namespace MyForm
 
         private void DataGridView_AddClick(object sender, EventArgs e)
         {
-            ContactAddForm contactsAddForm = new ContactAddForm(this);
+            ContactsAddForm contactsAddForm = new ContactsAddForm(this);
             contactsAddForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
 
         }

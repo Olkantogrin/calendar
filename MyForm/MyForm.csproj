@@ -71,14 +71,14 @@
     <Compile Include="AppointmentForm.Designer.cs">
       <DependentUpon>AppointmentForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ContactAddForm.cs">
+    <Compile Include="ContactDao.cs" />
+    <Compile Include="ContactsAddForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ContactAddForm.Designer.cs">
-      <DependentUpon>ContactAddForm.cs</DependentUpon>
+    <Compile Include="ContactsAddForm.Designer.cs">
+      <DependentUpon>ContactsAddForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ContactDao.cs" />
-    <Compile Include="ContactForm.cs">
+    <Compile Include="ContactsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ContactsEditForm.cs">

@@ -12,12 +12,12 @@ namespace MyForm
         private object id;
         private string loc;
         private CheckBox updateCheckBox;
-        private ContactForm contactForm;
+        private ContactsForm contactForm;
 
         TextBox textBox;
         string txt;
 
-        public ContactsEditForm(object id, string loc, ContactForm contactForm)
+        public ContactsEditForm(object id, string loc, ContactsForm contactForm)
         {
             this.id = id;
             this.loc = loc;
@@ -29,7 +29,7 @@ namespace MyForm
 
         }
 
-        private void InitializeContactControls(object id, ContactForm contactForm)
+        private void InitializeContactControls(object id, ContactsForm contactForm)
         {
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
             CultureInfo ci = new CultureInfo(loc);

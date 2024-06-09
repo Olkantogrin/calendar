@@ -73,6 +73,25 @@ namespace MyForm
             return name;
         }
 
+        
+            public void SaveContact(string text)
+            {
+                string connectionString = "Data Source=cal.db;Version=3;";
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string sql = "INSERT INTO contacts (name) VALUES (@text)";
+                    using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@text", text);
+                        command.ExecuteNonQuery();
+                    }
+                    connection.Close();
+                }
+            
+        }
+
         public void UpdateContactForId(string id, string newText)
         {
             string connectionString = "Data Source=cal.db;Version=3;";

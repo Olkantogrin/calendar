@@ -14,7 +14,7 @@ namespace MyForm
         private Font boldDateFont;
         private DateTime selectedDate;
         private AppointmentForm appointmentForm;
-        private ContactForm contactForm;
+        private ContactsForm contactForm;
         private DateTime previousDate;
         
         private ComboBox dropdownList;
@@ -104,7 +104,7 @@ namespace MyForm
         {
             if (contactForm == null || contactForm.IsDisposed)
             {
-                contactForm = new ContactForm(locale);
+                contactForm = new ContactsForm(locale);
                 if (appointmentForm != null) { appointmentForm.Close(); } 
                 contactForm.Show();
 
