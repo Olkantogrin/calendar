@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 
 
-namespace MyForm //TODO: C:\Users\user\source\repos\MyForm\MyForm\bin\Debug
+namespace MyForm 
 {
     public partial class ContactsAddForm : Form
     {

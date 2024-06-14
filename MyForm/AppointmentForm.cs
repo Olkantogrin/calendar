@@ -413,37 +413,48 @@ namespace MyForm
                 checkBoxAddToBoldedDates.Checked = true;
             }
 
+            
             if (!datePickerSelected && !checkBoxAddToBoldedDates.Checked)
             {
-                MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
-                e.Cancel = true; // Verhindert das Schließen des Formulars
-                checkBoxAddToBoldedDates.Checked = true;
+                //TODO: Kann das funktionieren? Wenn ja, die if-else-Schleife wegmachen.
+                //TODO: C:\Users\user\source\repos\MyForm\MyForm\bin\Debug
+
+                //MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
+                //e.Cancel = true; // Verhindert das Schließen des Formulars
+                //checkBoxAddToBoldedDates.Checked = true;
+
+                SaveData(e);
+
             }
+            
             else
             {
-
-                Entry entry = Entry.Instance;
-                isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
-
-                if (!checkBoxAddToBoldedDates.Checked)
-                {
-                    if (isCorrectEntries)
-                    {
-                        SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
-                    }
-                    else
-                    {
-                        MessageBox.Show("The start date must be before the end date.");
-                        e.Cancel = true;
-                    }
-                }
-                else
-                {
-                    SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
-                }
-                SelectedRepetitionIndex = comboBox.SelectedIndex;
+                SaveData(e);
             }
         }
 
+        private void SaveData(FormClosingEventArgs e)
+        {
+            Entry entry = Entry.Instance;
+            isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
+
+            if (!checkBoxAddToBoldedDates.Checked)
+            {
+                if (isCorrectEntries)
+                {
+                    SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
+                }
+                else
+                {
+                    MessageBox.Show("The start date must be before the end date.");
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
+            }
+            SelectedRepetitionIndex = comboBox.SelectedIndex;
+        }
     }
 }
