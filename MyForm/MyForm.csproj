@@ -140,6 +140,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\icon.ico" />
     <Content Include="README.txt" />
   </ItemGroup>
   <ItemGroup />
