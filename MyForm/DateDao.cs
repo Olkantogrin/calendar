@@ -152,12 +152,7 @@ namespace MyForm
 
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
-                        Console.WriteLine("####################################################");
-
-                        foreach (Date d in dates)
-                        {
-                            Console.WriteLine(d);
-                        }
+                        
 
                     }
                 }
@@ -507,35 +502,26 @@ namespace MyForm
                     foreach (DataColumn column in table.Columns)
                     {
                         object item = row[column];
-
-                        string strt = "";
-                        string ed = "";
-
-                        if (c == 2)
-                        {
-                            strt = item.ToString();
-                        }
-
-                        if (c == 3)
-                        {
-                            ed = item.ToString();
-                        }
-
-
-                       bool IsBtwn = IsBetween(strt, selectedDay, ed);
-
-                        if (IsBtwn) {
-                            newRow[column.ColumnName] = row[column];
-                        }
                         
-
+                        newRow[column.ColumnName] = row[column];
+                        
                         c++;
 
                     }
 
+              
+
+
                     // Neue Zeile zur neuen Tabelle hinzufügen
-                    if (!IsDataRowEmpty(newRow)) { 
-                    newTable.Rows.Add(newRow);
+                    if (!IsDataRowEmpty(newRow)) {
+                         
+                        bool b = IsBetween(newRow[2].ToString(), selectedDay, newRow[3].ToString());
+
+                        if (b) {
+
+                            newTable.Rows.Add(newRow);
+
+                        }
                     }
                 }
             }
@@ -575,6 +561,7 @@ namespace MyForm
         private bool IsBetween(string s, string dat, string e) {
 
             //TODO: Hier prüfen, ob dat zwischen s und e ist.
+
 
             return true;
         }
