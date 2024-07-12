@@ -45,6 +45,7 @@ namespace MyForm
             string connectionString = "Data Source=cal.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
+
                 connection.Open();
 
                 //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
@@ -100,6 +101,7 @@ namespace MyForm
 
                         dates.AddRange(newDates);
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
+
                     }
                 }
                 connection.Close();
@@ -116,6 +118,7 @@ namespace MyForm
         public Dictionary<Date, List<DateTime>> GetSelectedTextDatesForMonthAndYear(int month, int year)
         {
             List<Date> dates = new List<Date>();
+
 
             string formattedMonth = month.ToString("D2");
             string formattedYear = year.ToString("D4");
@@ -148,7 +151,14 @@ namespace MyForm
                         }
 
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
-                        
+
+                        Console.WriteLine("####################################################");
+
+                        foreach (Date d in dates)
+                        {
+                            Console.WriteLine(d);
+                        }
+
                     }
                 }
                 connection.Close();
@@ -157,6 +167,7 @@ namespace MyForm
             Span span = new Span();
             Dictionary<Date, List<DateTime>> selectedDates = span.GetDisplayDatesToDateList(dates);
             return selectedDates;
+
         }
 
         private List<Date> SetCorrectDateForRepeatedDates(List<Date> dates, int month, int year)
@@ -372,7 +383,7 @@ namespace MyForm
         public Date GetDateForId(object id)
         {
             Date d = null;
-
+            
             string connectionString = "Data Source=cal.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -433,8 +444,8 @@ namespace MyForm
             string day = selectedDate.Day.ToString("D2");
             string month = selectedDate.Month.ToString("D2");
             string year = selectedDate.Year.ToString("D4");
-
-            string selectedDay = day + "." + month + "." + year + " 00:00";
+            
+            string selectedDay = day + "." + month + "." + year;
            
             string connectionString = "Data Source=cal.db;Version=3;";
 
@@ -443,11 +454,9 @@ namespace MyForm
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                
+
                 //Das habe ich für Monate ausgeweitet...:
-                string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0) OR repeat = 'm' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) >= 1) AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) <= 12)";
-                //...da das nur für die Wochen war.
-                //string sql = $@"SELECT * FROM dates WHERE CAST('{selectedDay}' AS DATE) BETWEEN CAST(start AS DATE) AND CAST(end AS DATE) OR (repeat = 'w' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATE)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0)";
+                string sql = $@"SELECT * FROM dates";  // OR (repeat = 'w' AND CAST('{selectedDay}' AS DATETIME) >= CAST(start AS DATETIME) AND CAST('{selectedDay}' AS DATETIME) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATETIME)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0) OR repeat = 'm' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) >= 1) AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) <= 12)";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
@@ -456,6 +465,7 @@ namespace MyForm
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         DataTable dataTable = new DataTable();
+
                         dataTable.Load(reader); 
 
                         dataSet.Tables.Add(dataTable);
@@ -464,15 +474,122 @@ namespace MyForm
                 connection.Close();
             }
 
+            DataSet dataSet2 = new DataSet();
+
+            // Zuerst erstelle die Tabellen und Spalten in dataSet2 basierend auf dataSet
+            foreach (DataTable table in dataSet.Tables)
+            {
+                // Neue Tabelle erstellen
+                DataTable newTable = new DataTable(table.TableName);
+
+                // Spalten zur neuen Tabelle hinzufügen
+                foreach (DataColumn column in table.Columns)
+                {
+                    newTable.Columns.Add(column.ColumnName, column.DataType);
+                }
+
+                // Tabelle zu dataSet2 hinzufügen
+                dataSet2.Tables.Add(newTable);
+            }
+
+            // Jetzt befülle dataSet2 mit den Werten aus dataSet
+            foreach (DataTable table in dataSet.Tables)
+            {
+                // Entsprechende Tabelle in dataSet2 finden
+                DataTable newTable = dataSet2.Tables[table.TableName];
+
+                foreach (DataRow row in table.Rows)
+                {
+                    // Neue Zeile in der neuen Tabelle erstellen
+                    DataRow newRow = newTable.NewRow();
+
+                    int c = 0;
+                    foreach (DataColumn column in table.Columns)
+                    {
+                        object item = row[column];
+
+                        string strt = "";
+                        string ed = "";
+
+                        if (c == 2)
+                        {
+                            strt = item.ToString();
+                        }
+
+                        if (c == 3)
+                        {
+                            ed = item.ToString();
+                        }
 
 
-                return dataSet;
+                       bool IsBtwn = IsBetween(strt, selectedDay, ed);
+
+                        if (IsBtwn) {
+                            newRow[column.ColumnName] = row[column];
+                        }
+                        
+
+                        c++;
+
+                    }
+
+                    // Neue Zeile zur neuen Tabelle hinzufügen
+                    if (!IsDataRowEmpty(newRow)) { 
+                    newTable.Rows.Add(newRow);
+                    }
+                }
+            }
+
+
+            /*
+            foreach (DataTable table in dataSet.Tables)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    int c = 0;
+                    foreach (DataColumn column in table.Columns)
+                    {
+                        
+                        object item = row[column];
+
+                        if (c == 2) {
+                            Console.WriteLine("############################");
+                            Console.WriteLine(item);
+                        }
+
+                        if (c == 3)
+                        {
+                            Console.WriteLine("--------------------------------");
+                            Console.WriteLine(item);
+                        }
+
+                        c++;   
+                    }
+                }
+            }
+            */
+
+            return dataSet2;
         }
-        
 
+        private bool IsBetween(string s, string dat, string e) {
 
+            //TODO: Hier prüfen, ob dat zwischen s und e ist.
 
+            return true;
+        }
 
+        private bool IsDataRowEmpty(DataRow row)
+        {
+            foreach (var item in row.ItemArray)
+            {
+                if (item != null && item != DBNull.Value)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public void SetLocale(string locale)
         {

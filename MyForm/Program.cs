@@ -172,6 +172,8 @@ namespace MyForm
             bool isSchedulerRunning = true;
             schedulerThread = new Thread(() =>
             {
+                Thread.Sleep(60000);
+
                 DateDao dateDao = new DateDao();
 
                 ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);

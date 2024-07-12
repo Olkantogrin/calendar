@@ -416,12 +416,6 @@ namespace MyForm
             
             if (!datePickerSelected && !checkBoxAddToBoldedDates.Checked)
             {
-                //TODO: Kann das funktionieren? Wenn ja, die if-else-Schleife wegmachen.
-                //TODO: C:\Users\user\source\repos\MyForm\MyForm\bin\Debug
-
-                //MessageBox.Show("Bitte wählen Sie Termine für Anfangs- und Endzeit aus.");
-                //e.Cancel = true; // Verhindert das Schließen des Formulars
-                //checkBoxAddToBoldedDates.Checked = true;
 
                 SaveData(e);
 
