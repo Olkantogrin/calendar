@@ -15,9 +15,13 @@ namespace MyForm
 
         TextBox textContact;
 
+        ContactsForm contactForm;
+
         public ContactsAddForm(ContactsForm contactForm, string locale)
         {
             this.loc = locale;
+
+            this.contactForm = contactForm;
 
             InitializeContactAddControls();
         }
@@ -43,11 +47,19 @@ namespace MyForm
 
         }
 
+    
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
             ContactDao contactDao = new ContactDao();
-
             contactDao.SaveContact(textContact.Text);
+
+            this.contactForm.InitializeContactControls();
+
+            Close();
+
         }
+
+   
+
     }
 }
