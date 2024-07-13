@@ -104,7 +104,12 @@ namespace MyForm
         {
             if (contactForm == null || contactForm.IsDisposed)
             {
-                contactForm = new ContactsForm(locale);
+
+                DateDao dateDao = new DateDao();
+
+                string loc = dateDao.GetLocale();
+
+                contactForm = new ContactsForm(loc);
                 if (appointmentForm != null) { appointmentForm.Close(); } 
                 contactForm.Show();
 
@@ -288,8 +293,11 @@ namespace MyForm
         { 
             if (appointmentForm == null || appointmentForm.IsDisposed)
             {
-                // Öffnen des AppointmentForm-Formulars
-                appointmentForm = new AppointmentForm(monthCalendar.SelectionStart, locale);
+                DateDao dateDao = new DateDao();
+
+                string loc = dateDao.GetLocale();
+
+                appointmentForm = new AppointmentForm(monthCalendar.SelectionStart, loc);
                 appointmentForm.FormClosed += AppointmentForm_FormClosed;
                 if (contactForm!=null) { contactForm.Close(); } 
                 appointmentForm.Show();

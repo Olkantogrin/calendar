@@ -1,1 +1,5 @@
-﻿Eine wöchentliche Wiederholung kann implementiert werden.
+﻿Mit Priorität:
+Wenn bei der ContactsAddForm ein Kontakt hinzugefügt wird, dann wird das Grid der ContactForm nicht gleich upgedatet.
+
+Ohne Priorität:
+Eine wöchentliche Wiederholung kann implementiert werden.

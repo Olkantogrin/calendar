@@ -165,4 +165,7 @@
   <data name="Start date before end date!" xml:space="preserve">
     <value>Beginn vor Ende!</value>
   </data>
+  <data name="Submit" xml:space="preserve">
+    <value>senden</value>
+  </data>
 </root>

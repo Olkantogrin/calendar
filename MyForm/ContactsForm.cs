@@ -90,7 +90,7 @@ namespace MyForm
 
         private void DataGridView_AddClick(object sender, EventArgs e)
         {
-            ContactsAddForm contactsAddForm = new ContactsAddForm(this);
+            ContactsAddForm contactsAddForm = new ContactsAddForm(this, this.loc);
             contactsAddForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
 
         }
@@ -117,7 +117,6 @@ namespace MyForm
 
                     DataGridViewRow row = ((DataGridView)sender).Rows[e.RowIndex];
                     var id = row.Cells["id"].Value;
-
                     ContactsEditForm contactsEditForm = new ContactsEditForm(id, loc, this);
                     contactsEditForm.ShowDialog(); // Optional: Falls das Hauptfenster blockiert wird, bis die DetailsForm geschlossen wird, verwendet man ShowDialog(), sonst Show().
 
