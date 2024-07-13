@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Linq;
 
 
-namespace MyForm 
+namespace MyForm
 {
     public class DateDao
     {
@@ -72,6 +70,7 @@ namespace MyForm
 
                         foreach (Date ddd in dates)
                         {
+                            //NOTE: Kann nicht entfernt werden.
                             if ("w".Equals(ddd.Repeat))
                             {
                                 string startDate = ddd.Start;
@@ -80,7 +79,6 @@ namespace MyForm
                                 DateTime currentDateS = DateTime.ParseExact(startDate, "dd.MM.yyyy HH:mm", culture);
                                 DateTime currentDate = DateTime.ParseExact(endDate, "dd.MM.yyyy HH:mm", culture);
 
-                                //DateTime endOfMonth = new DateTime(currentDateS.Year, currentDateS.Month, DateTime.DaysInMonth(currentDateS.Year, currentDateS.Month), 23, 59, 59);
                                 DateTime endOfYear = new DateTime(currentDateS.Year, 12, DateTime.DaysInMonth(currentDateS.Year, 12), 23, 59, 59);
 
                                 while (currentDate < endOfYear)
@@ -130,7 +128,6 @@ namespace MyForm
             {
                 connection.Open();
 
-                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
                 string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR((start LIKE '%.{formattedYear}%' OR end LIKE '%.{formattedYear}%') AND repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
@@ -173,18 +170,14 @@ namespace MyForm
             foreach (Date d in dates) {
                 if ("y".Equals(d.Repeat))
                 {
-                    //Die Grund"kultur" der App ist das deutsche Format
                     CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                     DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
                     DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
                     DateTime updatedDateStart = new DateTime(year, parsedDateStart.Month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
-                    //DateTime updatedDateEnd = new DateTime(year, parsedDateEnd.Month, parsedDateEnd.Day, parsedDateEnd.Hour, parsedDateEnd.Minute, parsedDateEnd.Second);
 
-                    // Zeitspanne zwischen parsedDateStart und parsedDateEnd
                     TimeSpan difference = parsedDateEnd - parsedDateStart;
 
-                    // Die kommt dazu.
                     DateTime updatedDateEnd = updatedDateStart.Add(difference);
 
                     string updatedStart = updatedDateStart.ToString();
@@ -330,10 +323,8 @@ namespace MyForm
                 }
 
                 //Wenn year ein Schaltjahr ist:
-
                 bool isLeapYear = DateTime.IsLeapYear(year);
 
-                //lastDay = 29;
                 if (isLeapYear)
                 { lastDay = 29; }
 
@@ -384,7 +375,6 @@ namespace MyForm
             {
                 connection.Open();
 
-                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
                 string sql = $"SELECT * FROM dates WHERE id = '{id}'";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
@@ -450,8 +440,7 @@ namespace MyForm
             {
                 connection.Open();
 
-                //Das habe ich für Monate ausgeweitet...:
-                string sql = $@"SELECT * FROM dates";  // OR (repeat = 'w' AND CAST('{selectedDay}' AS DATETIME) >= CAST(start AS DATETIME) AND CAST('{selectedDay}' AS DATETIME) <= DATE('now', 'start of year', '+1 year', '-1 day') AND (JULIANDAY(CAST('{selectedDay}' AS DATETIME)) - JULIANDAY(CAST(start AS DATE))) % 7 = 0) OR repeat = 'm' AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) >= 1) AND CAST('{selectedDay}' AS DATE) >= CAST(start AS DATE) AND CAST('{selectedDay}' AS DATE) <= DATE('now', 'start of year', '+1 year', '-1 day') AND ( (strftime('%Y', CAST('{selectedDay}' AS DATE)) - strftime('%Y', CAST(start AS DATE))) * 12 + (strftime('%m', CAST('{selectedDay}' AS DATE)) - strftime('%m', CAST(start AS DATE))) <= 12)";
+                string sql = $@"SELECT * FROM dates";  
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
@@ -471,31 +460,24 @@ namespace MyForm
 
             DataSet dataSet2 = new DataSet();
 
-            // Zuerst erstelle die Tabellen und Spalten in dataSet2 basierend auf dataSet
             foreach (DataTable table in dataSet.Tables)
             {
-                // Neue Tabelle erstellen
                 DataTable newTable = new DataTable(table.TableName);
 
-                // Spalten zur neuen Tabelle hinzufügen
                 foreach (DataColumn column in table.Columns)
                 {
                     newTable.Columns.Add(column.ColumnName, column.DataType);
                 }
 
-                // Tabelle zu dataSet2 hinzufügen
                 dataSet2.Tables.Add(newTable);
             }
 
-            // Jetzt befülle dataSet2 mit den Werten aus dataSet
             foreach (DataTable table in dataSet.Tables)
             {
-                // Entsprechende Tabelle in dataSet2 finden
                 DataTable newTable = dataSet2.Tables[table.TableName];
 
                 foreach (DataRow row in table.Rows)
                 {
-                    // Neue Zeile in der neuen Tabelle erstellen
                     DataRow newRow = newTable.NewRow();
 
                     int c = 0;
@@ -508,14 +490,10 @@ namespace MyForm
                         c++;
 
                     }
-
-              
-
-
-                    // Neue Zeile zur neuen Tabelle hinzufügen
+                    
                     if (!IsDataRowEmpty(newRow)) {
                          
-                        bool b = IsBetween(newRow[2].ToString(), selectedDay, newRow[3].ToString());
+                        bool b = IsBetween(newRow[2].ToString(), selectedDay, newRow[3].ToString(), newRow[4].ToString());
 
                         if (b) {
 
@@ -526,43 +504,10 @@ namespace MyForm
                 }
             }
 
-
-            /*
-            foreach (DataTable table in dataSet.Tables)
-            {
-                foreach (DataRow row in table.Rows)
-                {
-                    int c = 0;
-                    foreach (DataColumn column in table.Columns)
-                    {
-                        
-                        object item = row[column];
-
-                        if (c == 2) {
-                            Console.WriteLine("############################");
-                            Console.WriteLine(item);
-                        }
-
-                        if (c == 3)
-                        {
-                            Console.WriteLine("--------------------------------");
-                            Console.WriteLine(item);
-                        }
-
-                        c++;   
-                    }
-                }
-            }
-            */
-
             return dataSet2;
         }
 
-        private bool IsBetween(string start, string selectedDate, string end) {
-
-            //MessageBox.Show(start);
-            //MessageBox.Show(selectedDate);
-            //MessageBox.Show(end);
+        private bool IsBetween(string start, string selectedDate, string end, string repeat) {
 
             string pattern = @"^\d{2}\.\d{2}\.\d{4}( \d{2}:\d{2})?$";
             Regex regex = new Regex(pattern);
@@ -571,14 +516,36 @@ namespace MyForm
             bool isSelectedDate = regex.IsMatch(selectedDate);
             bool isEnd = regex.IsMatch(end);
 
-            if (isStart && isSelectedDate && isEnd) { //TODO: Weiterentwickeln.
+            if (isStart && isSelectedDate && isEnd) { 
 
                 DateTime dt1 = DateTime.ParseExact(start.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 DateTime dt2 = DateTime.ParseExact(selectedDate.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 DateTime dt3 = DateTime.ParseExact(end.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
-                return (dt1 <= dt2 && dt2 <= dt3);
 
+                if ("n".Equals(repeat)) { 
+                  return (dt1 <= dt2 && dt2 <= dt3);
+                }
+
+                if ("m".Equals(repeat))
+                {
+                    bool isInRange = (dt1.Year == dt2.Year && dt2.Year == dt3.Year) &&
+                    (dt1.Day <= dt2.Day && dt2.Day <= dt3.Day);
+                     
+                    return isInRange;
+                }
+
+                if ("y".Equals(repeat))
+                {
+                    bool isInRange = (dt1.Month == dt2.Month && dt2.Month == dt3.Month) &&
+                    (dt1.Day <= dt2.Day && dt2.Day <= dt3.Day);
+
+                    return isInRange;
+                }
+
+               
+
+                return false;
 
             }
 

@@ -27,8 +27,8 @@ namespace MyForm
         public Form1()
         {
 
+            FormBorderStyle = FormBorderStyle.FixedDialog;
 
-            
             // Initialisierung des MonthCalendar
             monthCalendar = new MonthCalendar
             {
@@ -382,15 +382,17 @@ namespace MyForm
                     {
                         repetitionType = "y"; // Jährliche Wiederholung
                     }
+                    /*
                     else if (selectedRepetitionIndex == 3)
                     {
                         repetitionType = "w"; // wöchentliche Wiederholung
                     }
-
+                    */
 
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
 
+                    //NOTE: Kann nicht auskommentiert werden.
                     if ("w".Equals(repetitionType))
                     {
                         
@@ -399,7 +401,6 @@ namespace MyForm
                         DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
                         DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-                        //DateTime endOfMonth = new DateTime(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month), 23, 59, 59);
                         DateTime endOfYear = new DateTime(startDate.Year, 12, DateTime.DaysInMonth(startDate.Year, 12), 23, 59, 59);
 
                         monthCalendar.AddBoldedDate(startDate);

@@ -11,17 +11,14 @@ namespace MyForm
         bool GetLessThan24Hours(string time1String, string time2String)
         {
             
-            // Konvertiere die Strings in DateTime-Objekte mit einem festen Datum (z.B. heute)
             DateTime today = DateTime.Today;
             DateTime time1 = DateTime.ParseExact(time1String, "HH:mm:ss", CultureInfo.InvariantCulture);
             DateTime time2 = DateTime.ParseExact(time2String, "HH:mm:ss", CultureInfo.InvariantCulture);
 
             time2 = time2.AddDays(1);
  
-            // Berechne die Differenz zwischen den beiden Zeiten
             TimeSpan timeDifference = time2 - time1;
 
-            // Überprüfe, ob die Differenz weniger als 24 Stunden beträgt
             if (timeDifference.TotalHours < 24)
             {
                 return true;
@@ -37,10 +34,9 @@ namespace MyForm
             List<DateTime> dateTimes = new List<DateTime>(); 
             
             foreach (Date d in datelist) {
-            // Kulturinfo für das Datumsformat
+  
             CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
 
-            // Konvertieren von a und b in DateTime-Objekte
             DateTime startDate = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
             DateTime endDate = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
@@ -64,6 +60,7 @@ namespace MyForm
 
             }
             else {
+
                 // Schleife zur Generierung aller Termine zwischen startDate und endDate
                 DateTime currentDateTime = startDate;
                 while (currentDateTime <= endDate.AddDays(-1))
@@ -94,10 +91,8 @@ namespace MyForm
 
                 dateTimes = new List<DateTime>();
 
-                // Kulturinfo für das Datumsformat
                 CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
 
-                // Konvertieren von a und b in DateTime-Objekte
                 DateTime startDate = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
                 DateTime endDate = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
 
@@ -108,7 +103,6 @@ namespace MyForm
 
                 if (isLessThan24Hours)
                 {
-                    // Schleife zur Generierung aller Termine zwischen startDate und endDate
                     DateTime currentDateTime = startDate;
                     while (currentDateTime <= endDate)
                     {
@@ -122,7 +116,6 @@ namespace MyForm
                 }
                 else
                 {
-                    // Schleife zur Generierung aller Termine zwischen startDate und endDate
                     DateTime currentDateTime = startDate;
                     while (currentDateTime <= endDate.AddDays(-1))
                     {

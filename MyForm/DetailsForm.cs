@@ -24,6 +24,9 @@ namespace MyForm
 
         public DetailsForm(object id, AppointmentForm appointmentForm)
         {
+
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+
             this.appointmentForm = appointmentForm;
             this.id = id;
             InitializeComponent();
@@ -44,7 +47,7 @@ namespace MyForm
 
             if (date != null) { 
 
-            string start = date.Start; //24.05.2024 13:03
+            string start = date.Start;
             string end = date.End;
 
                 textBoxDate = new TextBox
@@ -141,7 +144,6 @@ namespace MyForm
 
                     DataGridView dataGridView = appointmentForm.dataGridView;
 
-                    // Durchlaufen der Zeilen in der DataGridView, um die entsprechende Zeile zu finden
                     foreach (DataGridViewRow row in dataGridView.Rows)
                     {
                         if (row.Cells["id"].Value != null && row.Cells["id"].Value.Equals(id))

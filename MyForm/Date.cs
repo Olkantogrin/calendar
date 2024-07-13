@@ -16,14 +16,12 @@
             set { text = value; }
         }
 
-        // Getter und Setter für start
         public string Start
         {
             get { return start; }
             set { start = value; }
         }
 
-        // Getter und Setter für end
         public string End
         {
             get { return end; }
@@ -48,7 +46,6 @@
         
         public override string ToString()
         {
-            // Gibt den Namen und das Alter der Person zurück:
             return $"Text: {Text}, Start: {Start}, End: {End}, Repeat: {Repeat}";
         }
         

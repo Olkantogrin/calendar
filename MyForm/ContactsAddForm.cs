@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
 
-namespace MyForm 
+namespace MyForm
 {
     public partial class ContactsAddForm : Form
     {
@@ -25,14 +19,14 @@ namespace MyForm
         {
             textContact = new TextBox();
             textContact.Text = "";
-            textContact.Location = new Point(10, 10); // Setze die Position des Textfelds
-            this.Controls.Add(textContact); // Füge das Textfeld zur Form hinzu
+            textContact.Location = new Point(10, 10); 
+            this.Controls.Add(textContact); 
 
             Button btnSubmit = new Button();
-            btnSubmit.Text = "Submit"; // Setze den Text des Buttons
-            btnSubmit.Location = new Point(10, 40); // Setze die Position des Buttons
-            btnSubmit.Click += BtnSubmit_Click; // Füge einen Event-Handler für den Klick auf den Button hinzu
-            this.Controls.Add(btnSubmit); // Füge den Button zur Form hinzu
+            btnSubmit.Text = "Submit"; 
+            btnSubmit.Location = new Point(10, 40); 
+            btnSubmit.Click += BtnSubmit_Click; 
+            this.Controls.Add(btnSubmit); 
 
         }
 

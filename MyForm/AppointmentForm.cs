@@ -52,8 +52,14 @@ namespace MyForm
 
         string locale = "de-DE";
 
+        string firstPickedDate = "";
+
         public AppointmentForm(DateTime selectedDate, string loc)
         {
+
+            firstPickedDate = selectedDate.ToString();
+
+            FormBorderStyle = FormBorderStyle.FixedDialog;
 
             locale = loc;
 
@@ -293,10 +299,9 @@ namespace MyForm
             comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
             comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m");
             comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y");
-            comboBox.Items.Add(resourceManager.GetString("weekly repetition") + " w");
+            //comboBox.Items.Add(resourceManager.GetString("weekly repetition") + " w");
 
-            // Optional: Standardauswahl setzen
-            comboBox.SelectedIndex = 0; // Wählt die erste Option "wöchentlich" als Standard
+            comboBox.SelectedIndex = 0; 
 
             // Fügen Sie die Combobox zum Formular hinzu
             this.Controls.Add(comboBox);
@@ -308,37 +313,21 @@ namespace MyForm
             };
             Controls.Add(textBoxDate);
 
-            // DateTimePicker für die Anfangsuhrzeit
-            /*
-            dateTimePickerStart = new DateTimePicker
-            {
-                Format = DateTimePickerFormat.Time,
-                CustomFormat = "HH:mm",
-                Location = new Point(10, 70),
-                Width = 100
-            };
-            Controls.Add(dateTimePickerStart);
-             
-
-            // DateTimePicker für die Enduhrzeit
-            dateTimePickerEnd = new DateTimePicker
-            {
-                Format = DateTimePickerFormat.Time,
-                Location = new Point(120, 70),
-                Width = 100
-            };
-            Controls.Add(dateTimePickerEnd);
-            */
+         
 
             dateTimePickerStart = new DateTimePicker();
             dateTimePickerStart.Format = DateTimePickerFormat.Custom;
             dateTimePickerStart.CustomFormat = "dd.MM.yyyy HH:mm";
             dateTimePickerStart.Location = new Point(10, 70);
 
+            dateTimePickerStart.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
             dateTimePickerEnd = new DateTimePicker();
             dateTimePickerEnd.Format = DateTimePickerFormat.Custom;
             dateTimePickerEnd.CustomFormat = "dd.MM.yyyy HH:mm";
             dateTimePickerEnd.Location = new Point(10, 95);
+
+            dateTimePickerEnd.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
             Controls.Add(dateTimePickerStart);
             Controls.Add(dateTimePickerEnd);

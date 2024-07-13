@@ -28,7 +28,6 @@ namespace MyForm
                  
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        // Erstellen eines DataTable, um die Daten zu speichern
                         DataTable dataTable = new DataTable();
                         dataTable.Load(reader); 
 

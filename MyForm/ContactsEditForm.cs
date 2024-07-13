@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Globalization;
 using System.Resources;
 using System.Threading;
@@ -38,8 +37,8 @@ namespace MyForm
 
             textBox = new TextBox();
 
-            textBox.Location = new Point(10, 10); // X, Y Koordinaten auf der Form
-            textBox.Size = new Size(200, 20); // Breite, Höhe des Textfeldes
+            textBox.Location = new Point(10, 10); 
+            textBox.Size = new Size(200, 20); 
 
             ContactDao contactDao = new ContactDao();
             txt = contactDao.GetEntryForId(id.ToString());
@@ -50,7 +49,7 @@ namespace MyForm
 
             updateCheckBox = new CheckBox
             {
-                Location = new Point(10, 40), // Position below the TextBox
+                Location = new Point(10, 40), 
                 Size = new Size(200, 20),
                 Text = resourceManager.GetString("update")
             };
