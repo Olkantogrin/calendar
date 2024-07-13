@@ -162,4 +162,7 @@
   <data name="contacts" xml:space="preserve">
     <value>contacts</value>
   </data>
+  <data name="Start date before end date!" xml:space="preserve">
+    <value>Start date before end date!</value>
+  </data>
 </root>

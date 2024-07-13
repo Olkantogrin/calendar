@@ -41,7 +41,7 @@ namespace MyForm
         private DateTimePicker dateTimePickerEnd;
         private Button closeButton;
         private Button saveButton;
-
+        
         public DataGridView dataGridView;
         private DataGridView dataGridViewC;
 
@@ -319,8 +319,10 @@ namespace MyForm
             dateTimePickerStart.Format = DateTimePickerFormat.Custom;
             dateTimePickerStart.CustomFormat = "dd.MM.yyyy HH:mm";
             dateTimePickerStart.Location = new Point(10, 70);
-
+            
             dateTimePickerStart.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+            dateTimePickerStart.ValueChanged += DateTimePickerStart_ValueChanged;
 
             dateTimePickerEnd = new DateTimePicker();
             dateTimePickerEnd.Format = DateTimePickerFormat.Custom;
@@ -328,6 +330,8 @@ namespace MyForm
             dateTimePickerEnd.Location = new Point(10, 95);
 
             dateTimePickerEnd.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+            dateTimePickerEnd.ValueChanged += DateTimePickerEnd_ValueChanged;
 
             Controls.Add(dateTimePickerStart);
             Controls.Add(dateTimePickerEnd);
@@ -383,7 +387,6 @@ namespace MyForm
 
         private void AppointmentForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-
             SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
         }
 
@@ -395,8 +398,28 @@ namespace MyForm
             EndTime = endTime;
         }
 
+
+        private void DateTimePickerStart_ValueChanged(object sender, EventArgs e)
+        {
+            if (dateTimePickerStart.Value.Date > dateTimePickerEnd.Value.Date)
+            {
+                MessageBox.Show("Das Startdatum darf nicht nach dem Enddatum liegen.", "Ungültiges Datum", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dateTimePickerStart.Value = dateTimePickerEnd.Value.Date; // Setzen Sie den Startdatum auf das Enddatum
+            }
+        }
+
+        private void DateTimePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            if (dateTimePickerEnd.Value.Date < dateTimePickerStart.Value.Date)
+            {
+                MessageBox.Show("Das Enddatum darf nicht vor dem Startdatum liegen.", "Ungültiges Datum", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dateTimePickerEnd.Value = dateTimePickerStart.Value.Date; // Setzen Sie das Enddatum auf das Startdatum
+            }
+        }
+
         private void AppointmentForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            
             if (!closeButtonClicked)
             {
                 checkBoxAddToBoldedDates.Checked = true;
@@ -421,17 +444,23 @@ namespace MyForm
             Entry entry = Entry.Instance;
             isCorrectEntries = entry.isCorrect(dateTimePickerStart, dateTimePickerEnd);
 
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             if (!checkBoxAddToBoldedDates.Checked)
             {
                 if (isCorrectEntries)
                 {
                     SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
                 }
-                else
-                {
-                    MessageBox.Show("The start date must be before the end date.");
-                    e.Cancel = true;
-                }
+                
+                //else
+                //{
+                //   MessageBox.Show(resourceManager.GetString("The start date must be before the end date."));
+                //    e.Cancel = true;
+                //}
             }
             else
             {

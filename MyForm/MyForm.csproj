@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\icon.ico" />
-    <Content Include="README.txt" />
+    <Content Include="TODOs.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
