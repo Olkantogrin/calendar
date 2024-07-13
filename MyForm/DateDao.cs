@@ -558,12 +558,31 @@ namespace MyForm
             return dataSet2;
         }
 
-        private bool IsBetween(string s, string dat, string e) {
+        private bool IsBetween(string start, string selectedDate, string end) {
 
-            //TODO: Hier prüfen, ob dat zwischen s und e ist.
+            //MessageBox.Show(start);
+            //MessageBox.Show(selectedDate);
+            //MessageBox.Show(end);
+
+            string pattern = @"^\d{2}\.\d{2}\.\d{4}( \d{2}:\d{2})?$";
+            Regex regex = new Regex(pattern);
+
+            bool isStart = regex.IsMatch(start);
+            bool isSelectedDate = regex.IsMatch(selectedDate);
+            bool isEnd = regex.IsMatch(end);
+
+            if (isStart && isSelectedDate && isEnd) { //TODO: Weiterentwickeln.
+
+                DateTime dt1 = DateTime.ParseExact(start.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime dt2 = DateTime.ParseExact(selectedDate.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime dt3 = DateTime.ParseExact(end.Substring(0, 10), "dd.MM.yyyy", CultureInfo.InvariantCulture);
+
+                return (dt1 <= dt2 && dt2 <= dt3);
 
 
-            return true;
+            }
+
+            return false;
         }
 
         private bool IsDataRowEmpty(DataRow row)
