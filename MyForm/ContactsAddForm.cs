@@ -13,7 +13,9 @@ namespace MyForm
     {
         private string loc = "de-DE";
 
-        TextBox textContact;
+        Label labelTextContact; Label labelStreetAndNumber; Label labelPostalCodeAndCity;
+        TextBox textContact; TextBox textStreetAndNumber; TextBox textPostalCodeAndCity;
+        TextBox textTel; TextBox textMail;
 
         ContactsForm contactForm;
 
@@ -33,15 +35,61 @@ namespace MyForm
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
             
-
+            labelTextContact = new Label();
+            labelTextContact.Text = resourceManager.GetString("contact");
+            labelTextContact.Location = new Point(10, 10);
+            this.Controls.Add(labelTextContact);
+            
             textContact = new TextBox();
-            textContact.Text = "";
-            textContact.Location = new Point(10, 10); 
-            this.Controls.Add(textContact); 
+            textContact.Location = new Point(10, 36);
+            textContact.Width = 250;
+            this.Controls.Add(textContact);
+
+            labelStreetAndNumber = new Label();
+            labelStreetAndNumber.Text = resourceManager.GetString("Street and house number");
+            labelStreetAndNumber.Location = new Point(10, 64);
+            labelStreetAndNumber.Width = 250;
+            this.Controls.Add(labelStreetAndNumber);
+
+            textStreetAndNumber = new TextBox();
+            textStreetAndNumber.Text = "Noch kein DB-Anschluss.";
+            textStreetAndNumber.Location = new Point(10, 90);
+            textStreetAndNumber.Width = 250;
+            this.Controls.Add(textStreetAndNumber);
+
+            labelPostalCodeAndCity = new Label();
+            labelPostalCodeAndCity.Text = resourceManager.GetString("Town and postal code");
+            labelPostalCodeAndCity.Location = new Point(10, 120);
+            labelPostalCodeAndCity.Width = 250;
+            this.Controls.Add(labelPostalCodeAndCity);
+
+            textPostalCodeAndCity = new TextBox();
+            textPostalCodeAndCity.Text = "Noch kein DB-Anschluss.";
+            textPostalCodeAndCity.Location = new Point(10, 146);
+            textPostalCodeAndCity.Width = 250;
+            this.Controls.Add(textPostalCodeAndCity);
+
+
+            ///////////////////////////
+
+            textTel = new TextBox();
+            textTel.Text = "Noch kein DB-Anschluss."; //resourceManager.GetString("phone");
+            textTel.Location = new Point(10, 172);
+            textTel.Width = 250;
+            this.Controls.Add(textTel);
+
+
+            textMail = new TextBox();
+            textMail.Text = "Noch kein DB-Anschluss."; //resourceManager.GetString("mail");
+            textMail.Location = new Point(10, 196);
+            textMail.Width = 250;
+            this.Controls.Add(textMail);
+
+            ///////////////////////////
 
             Button btnSubmit = new Button();
             btnSubmit.Text = resourceManager.GetString("Submit");  
-            btnSubmit.Location = new Point(10, 40); 
+            btnSubmit.Location = new Point(10, 220); 
             btnSubmit.Click += BtnSubmit_Click; 
             this.Controls.Add(btnSubmit); 
 

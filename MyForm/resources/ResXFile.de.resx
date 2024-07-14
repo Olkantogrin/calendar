@@ -174,4 +174,19 @@
   <data name="The start date must not be after the end date." xml:space="preserve">
     <value>Das Startdatum darf nicht nach dem Enddatum liegen.</value>
   </data>
+  <data name="contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="mail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="phone" xml:space="preserve">
+    <value>Tel.</value>
+  </data>
+  <data name="Street and house number" xml:space="preserve">
+    <value>Straße und Hausnummer</value>
+  </data>
+  <data name="Town and postal code" xml:space="preserve">
+    <value>Stadt und PLZ</value>
+  </data>
 </root>
