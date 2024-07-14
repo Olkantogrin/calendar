@@ -70,7 +70,7 @@ namespace MyForm
 
                         foreach (Date ddd in dates)
                         {
-                            //NOTE: Kann nicht entfernt werden.
+                            /*
                             if ("w".Equals(ddd.Repeat))
                             {
                                 string startDate = ddd.Start;
@@ -95,6 +95,7 @@ namespace MyForm
                                     }
                                 }
                             }
+                            */
                         }
 
                         dates.AddRange(newDates);
@@ -168,6 +169,7 @@ namespace MyForm
             List<Date> datesresult = new List<Date>();
             
             foreach (Date d in dates) {
+
                 if ("y".Equals(d.Repeat))
                 {
                     CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");

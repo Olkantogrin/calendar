@@ -168,4 +168,10 @@
   <data name="Submit" xml:space="preserve">
     <value>Submit</value>
   </data>
+  <data name="If repeated monthly, it must be the same month." xml:space="preserve">
+    <value>If repeated monthly, it must be the same month.</value>
+  </data>
+  <data name="The start date must not be after the end date." xml:space="preserve">
+    <value>The start date must not be after the end date.</value>
+  </data>
 </root>

@@ -34,7 +34,7 @@ namespace MyForm
         private bool datePickerSelected = false;
 
         private CheckBox checkBoxAddToBoldedDates;
-        private ComboBox comboBox;
+        private ComboBox comboBoxRepeat;
         private CheckBox wholeDay;
         private TextBox textBoxDate;
         private DateTimePicker dateTimePickerStart;
@@ -282,9 +282,10 @@ namespace MyForm
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
-            comboBox = new ComboBox();
-            comboBox.Location = new Point(10, 10); // X, Y Koordinaten auf dem Formular
-            comboBox.Size = new Size(125, 20); // Breite, Höhe
+            comboBoxRepeat = new ComboBox();
+            comboBoxRepeat.Location = new Point(10, 10); // X, Y Koordinaten auf dem Formular
+            comboBoxRepeat.Size = new Size(125, 20); // Breite, Höhe
+            comboBoxRepeat.SelectedIndexChanged += ComboBox_SelectedIndexChanged;
 
             wholeDay = new CheckBox();
             wholeDay.Location = new Point(200, 10);
@@ -296,15 +297,15 @@ namespace MyForm
             wholeDayLabel.Location = new Point(140, 12);
             this.Controls.Add(wholeDayLabel);
 
-            comboBox.Items.Add(resourceManager.GetString("no repetition") + " n");
-            comboBox.Items.Add(resourceManager.GetString("monthly repetition") + " m");
-            comboBox.Items.Add(resourceManager.GetString("yearly repetition") + " y");
+            comboBoxRepeat.Items.Add(resourceManager.GetString("no repetition") + " n");
+            comboBoxRepeat.Items.Add(resourceManager.GetString("monthly repetition") + " m");
+            comboBoxRepeat.Items.Add(resourceManager.GetString("yearly repetition") + " y");
             //comboBox.Items.Add(resourceManager.GetString("weekly repetition") + " w");
 
-            comboBox.SelectedIndex = 0; 
+            comboBoxRepeat.SelectedIndex = 0; 
 
             // Fügen Sie die Combobox zum Formular hinzu
-            this.Controls.Add(comboBox);
+            this.Controls.Add(comboBoxRepeat);
 
             textBoxDate = new TextBox
             {
@@ -377,12 +378,45 @@ namespace MyForm
             if (dateTimePickerStart.Value != null && dateTimePickerEnd.Value != null)
             {
                 datePickerSelected = true;
+                if (comboBoxRepeat.SelectedIndex > 0) {
+                    Monthly();
+                }
             }
             else
             {
                 datePickerSelected = false;
             }
 
+        }
+
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxRepeat.SelectedIndex > 0)
+            {
+                Monthly();
+            }
+        }
+
+        private void Monthly()
+        {
+
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
+
+            DateTime dateStart = dateTimePickerStart.Value;
+            int monthStart = dateStart.Month;
+
+            DateTime dateEnd = dateTimePickerEnd.Value;
+            int monthEnd = dateEnd.Month;
+
+            if (monthStart != monthEnd)
+            {
+                MessageBox.Show(resourceManager.GetString("If repeated monthly, it must be the same month.")); 
+                dateTimePickerEnd.Value = dateTimePickerStart.Value;
+            }
         }
 
         private void AppointmentForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -401,18 +435,29 @@ namespace MyForm
 
         private void DateTimePickerStart_ValueChanged(object sender, EventArgs e)
         {
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
+
             if (dateTimePickerStart.Value.Date > dateTimePickerEnd.Value.Date)
             {
-                MessageBox.Show("Das Startdatum darf nicht nach dem Enddatum liegen.", "Ungültiges Datum", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(resourceManager.GetString("The start date must not be after the end date."));
                 dateTimePickerStart.Value = dateTimePickerEnd.Value.Date; // Setzen Sie den Startdatum auf das Enddatum
             }
         }
 
         private void DateTimePickerEnd_ValueChanged(object sender, EventArgs e)
         {
+            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            CultureInfo ci = new CultureInfo(locale);
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             if (dateTimePickerEnd.Value.Date < dateTimePickerStart.Value.Date)
             {
-                MessageBox.Show("Das Enddatum darf nicht vor dem Startdatum liegen.", "Ungültiges Datum", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(resourceManager.GetString("The start date must not be after the end date."));
                 dateTimePickerEnd.Value = dateTimePickerStart.Value.Date; // Setzen Sie das Enddatum auf das Startdatum
             }
         }
@@ -466,7 +511,7 @@ namespace MyForm
             {
                 SetAppointmentDetails(textBoxDate.Text, dateTimePickerStart.Value.TimeOfDay, dateTimePickerEnd.Value.TimeOfDay);
             }
-            SelectedRepetitionIndex = comboBox.SelectedIndex;
+            SelectedRepetitionIndex = comboBoxRepeat.SelectedIndex;
         }
     }
 }

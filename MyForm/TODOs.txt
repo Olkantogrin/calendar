@@ -1,2 +1,1 @@
-﻿Ohne Priorität:
-Eine wöchentliche Wiederholung kann implementiert werden.
+﻿

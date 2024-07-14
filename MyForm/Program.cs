@@ -400,7 +400,7 @@ namespace MyForm
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
 
-                    //NOTE: Kann nicht auskommentiert werden.
+                    /*
                     if ("w".Equals(repetitionType))
                     {
                         
@@ -425,6 +425,7 @@ namespace MyForm
                         monthCalendar.UpdateBoldedDates();
                     }
                     else { 
+                    */
 
                     List<Date> datelist = new List<Date>();
                     datelist.Add(d);
@@ -439,7 +440,7 @@ namespace MyForm
                     }
                     monthCalendar.UpdateBoldedDates();
 
-                    }
+                    //}
 
                     DateDao dateDao = new DateDao();
                     dateDao.SaveAppointment(d);
