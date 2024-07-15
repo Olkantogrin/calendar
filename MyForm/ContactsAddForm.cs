@@ -128,6 +128,9 @@ namespace MyForm
             }
 
             //TODO: Alle Felder von contact sollen in die DB.
+
+            //TODO: Aber bei der Darstellung soll nur das Feld für den Namen des Contact-Objekts dargestellt werden, die anderen nicht.
+
             Contact contact = new Contact(contactText, contactStreetAndNumber,
             contactPostalCodeAndCity,
             contactTel,
@@ -145,6 +148,11 @@ namespace MyForm
 
         private bool IsValidMail(string email)
         {
+            if (string.IsNullOrEmpty(email)) {
+                return true;
+            }
+
+
             if (email.IndexOf("@") <= 0)
                 return false;
 
@@ -159,11 +167,17 @@ namespace MyForm
             }
         }
 
-        private bool IsValidTel(string contactTel)
+        private bool IsValidTel(string tel)
         {
+            if (string.IsNullOrEmpty(tel))
+            {
+                return true;
+            }
+
+
             string pattern = @"^(\(?\d{3}\) ?)?\d{3}-\d{4}$";
 
-            return Regex.IsMatch(contactTel, pattern);
+            return Regex.IsMatch(tel, pattern);
         }
     }
 }
