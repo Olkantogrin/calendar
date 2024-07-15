@@ -189,4 +189,10 @@
   <data name="Town and postal code" xml:space="preserve">
     <value>Town and postal code</value>
   </data>
+  <data name="Not a valid e-mail." xml:space="preserve">
+    <value>Not a valid e-mail.</value>
+  </data>
+  <data name="Not a valid phone number." xml:space="preserve">
+    <value>Not a valid phone number.</value>
+  </data>
 </root>

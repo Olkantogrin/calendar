@@ -189,4 +189,10 @@
   <data name="Town and postal code" xml:space="preserve">
     <value>Город и почтовый индекс</value>
   </data>
+  <data name="Not a valid e-mail." xml:space="preserve">
+    <value>Недействительный e-mail.</value>
+  </data>
+  <data name="Not a valid phone number." xml:space="preserve">
+    <value>Недействительный номер телефона.</value>
+  </data>
 </root>

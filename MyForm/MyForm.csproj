@@ -74,6 +74,7 @@
     <Compile Include="AppointmentForm.Designer.cs">
       <DependentUpon>AppointmentForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Contact.cs" />
     <Compile Include="ContactDao.cs" />
     <Compile Include="ContactsAddForm.cs">
       <SubType>Form</SubType>

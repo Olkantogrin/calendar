@@ -73,7 +73,7 @@ namespace MyForm
         }
 
         
-            public void SaveContact(string text)
+            public void SaveContact(Contact contact)
             {
                 string connectionString = "Data Source=cal.db;Version=3;";
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
@@ -83,7 +83,7 @@ namespace MyForm
                     string sql = "INSERT INTO contacts (name) VALUES (@text)";
                     using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@text", text);
+                        command.Parameters.AddWithValue("@text", contact.Text);
                         command.ExecuteNonQuery();
                     }
                     connection.Close();

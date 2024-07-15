@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
+using System.Net.Mail;
 using System.Resources;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -98,16 +100,70 @@ namespace MyForm
     
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
+
+            //ALTER TABLE contacts ADD streetandnumber TEXT, postalcodeandcity TEXT, mail TEXT, tel TEXT; und dann
+
+            string contactText = textContact.Text;
+            string contactStreetAndNumber = textStreetAndNumber.Text;
+            string contactPostalCodeAndCity = textPostalCodeAndCity.Text;        
+            string contactTel = textTel.Text;
+            string contactMail = textMail.Text;
+
+            bool isClose = true;
+            bool isValidTel = IsValidTel(contactTel);
+            bool isValidMail = IsValidMail(contactMail);
+
+            if (!isValidTel) {
+                MessageBox.Show("Not a valid phone number.");
+                isClose = false;
+                textTel.Text = "";
+
+            }
+
+            if (!isValidMail)
+            {
+                MessageBox.Show("Not a valid e-mail.");
+                isClose = false;
+                textMail.Text = "";
+            }
+
+            //TODO: Alle Felder von contact sollen in die DB.
+            Contact contact = new Contact(contactText, contactStreetAndNumber,
+            contactPostalCodeAndCity,
+            contactTel,
+            contactMail);
+            
             ContactDao contactDao = new ContactDao();
-            contactDao.SaveContact(textContact.Text);
+            contactDao.SaveContact(contact);
 
             this.contactForm.InitializeContactControls();
 
-            Close();
-
+            if (isClose) { 
+              Close();
+            }
         }
 
-   
+        private bool IsValidMail(string email)
+        {
+            if (email.IndexOf("@") <= 0)
+                return false;
 
+            try
+            {
+                var address = new MailAddress(email);
+                return address.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool IsValidTel(string contactTel)
+        {
+            string pattern = @"^(\(?\d{3}\) ?)?\d{3}-\d{4}$";
+
+            return Regex.IsMatch(contactTel, pattern);
+        }
     }
 }
