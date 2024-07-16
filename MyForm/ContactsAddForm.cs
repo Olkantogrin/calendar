@@ -102,8 +102,15 @@ namespace MyForm
             string contactTel = textTel.Text;
             string contactMail = textMail.Text;
 
+            if ("11123456789".Equals(contactTel)) { contactTel = ""; }
+
+            if ("mail@mail.com".Equals(contactMail)) { contactMail = ""; }
+
             bool isClose = true;
             bool isValidTel = IsValidTel(contactTel);
+
+            MessageBox.Show(isValidTel.ToString());
+
             bool isValidMail = IsValidMail(contactMail);
 
           
@@ -146,14 +153,40 @@ namespace MyForm
             this.contactForm.InitializeContactControls();
         }
 
-        private bool IsValidMail(string email) //TODO: Implementieren.
+        private bool IsValidMail(string email) 
         {
+            if (string.IsNullOrEmpty(email)) {
                 return true;
+            }
+
+            try
+            {
+             MailAddress m = new MailAddress(email);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+
         }
 
-        private bool IsValidTel(string tel) //TODO: Implementieren.
+        private bool IsValidTel(string tel) 
         {
-            return true;
+            if (string.IsNullOrEmpty(tel))
+            {
+                return true;
+            }
+            
+            tel = tel.Trim();
+
+            if (string.IsNullOrEmpty(tel))
+                    return false;
+            var r = new Regex(@"^\+?(\(?[0-9]{3}\)?[-.●]?[0-9]{3}[-.●]?[0-9]{4})$");
+            return r.IsMatch(tel);
+
+            
         }
     }
 }
