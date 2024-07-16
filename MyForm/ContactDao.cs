@@ -78,13 +78,20 @@ namespace MyForm
                 string connectionString = "Data Source=cal.db;Version=3;";
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    connection.Open();
+                    connection.Open(); 
 
-                    string sql = "INSERT INTO contacts (name) VALUES (@text)";
-                    using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                    string sql = "INSERT INTO contacts (name, streetandnumber, postalcodeandcity, mail, tel) VALUES (@text, @streetAndNumber, @postalCodeAndCity, @tel, @mail)";   
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                     {
-                        command.Parameters.AddWithValue("@text", contact.Text);
-                        command.ExecuteNonQuery();
+                    command.Parameters.AddWithValue("@text", contact.Text);
+                    command.Parameters.AddWithValue("@streetAndNumber", contact.ContactStreetAndNumber);
+                    command.Parameters.AddWithValue("@postalCodeAndCity", contact.ContactPostalCodeAndCity);
+                    command.Parameters.AddWithValue("@tel", contact.ContactTel);
+                    command.Parameters.AddWithValue("@mail", contact.ContactMail);
+
+
+
+                    command.ExecuteNonQuery();
                     }
                     connection.Close();
                 }

@@ -54,7 +54,6 @@ namespace MyForm
             this.Controls.Add(labelStreetAndNumber);
 
             textStreetAndNumber = new TextBox();
-            textStreetAndNumber.Text = "Noch kein DB-Anschluss.";
             textStreetAndNumber.Location = new Point(10, 90);
             textStreetAndNumber.Width = 250;
             this.Controls.Add(textStreetAndNumber);
@@ -66,28 +65,22 @@ namespace MyForm
             this.Controls.Add(labelPostalCodeAndCity);
 
             textPostalCodeAndCity = new TextBox();
-            textPostalCodeAndCity.Text = "Noch kein DB-Anschluss.";
             textPostalCodeAndCity.Location = new Point(10, 146);
             textPostalCodeAndCity.Width = 250;
             this.Controls.Add(textPostalCodeAndCity);
 
-
-            ///////////////////////////
-
-            textTel = new TextBox();
-            textTel.Text = "Noch kein DB-Anschluss."; //resourceManager.GetString("phone");
-            textTel.Location = new Point(10, 172);
-            textTel.Width = 250;
-            this.Controls.Add(textTel);
-
-
             textMail = new TextBox();
-            textMail.Text = "Noch kein DB-Anschluss."; //resourceManager.GetString("mail");
-            textMail.Location = new Point(10, 196);
+            textMail.Text = "mail@mail.com"; //resourceManager.GetString("phone");
+            textMail.Location = new Point(10, 172);
             textMail.Width = 250;
             this.Controls.Add(textMail);
 
-            ///////////////////////////
+
+            textTel = new TextBox();
+            textTel.Text = "11123456789"; //resourceManager.GetString("mail");
+            textTel.Location = new Point(10, 196);
+            textTel.Width = 250;
+            this.Controls.Add(textTel);
 
             Button btnSubmit = new Button();
             btnSubmit.Text = resourceManager.GetString("Submit");  
@@ -113,6 +106,9 @@ namespace MyForm
             bool isValidTel = IsValidTel(contactTel);
             bool isValidMail = IsValidMail(contactMail);
 
+          
+
+
             if (!isValidTel) {
                 MessageBox.Show("Not a valid phone number.");
                 isClose = false;
@@ -127,57 +123,37 @@ namespace MyForm
                 textMail.Text = "";
             }
 
-            //TODO: Alle Felder von contact sollen in die DB.
+            if(isClose) {
 
-            //TODO: Aber bei der Darstellung soll nur das Feld für den Namen des Contact-Objekts dargestellt werden, die anderen nicht.
+                if (contactMail.Equals("mail@mail.com")) { contactMail = "";  }
+
+                if (contactTel.Equals("11123456789")) { contactTel = ""; }
+
+
 
             Contact contact = new Contact(contactText, contactStreetAndNumber,
             contactPostalCodeAndCity,
             contactTel,
             contactMail);
-            
+             
             ContactDao contactDao = new ContactDao();
             contactDao.SaveContact(contact);
+            
+            Close();
+
+            }
 
             this.contactForm.InitializeContactControls();
-
-            if (isClose) { 
-              Close();
-            }
         }
 
-        private bool IsValidMail(string email)
+        private bool IsValidMail(string email) //TODO: Implementieren.
         {
-            if (string.IsNullOrEmpty(email)) {
                 return true;
-            }
-
-
-            if (email.IndexOf("@") <= 0)
-                return false;
-
-            try
-            {
-                var address = new MailAddress(email);
-                return address.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
-        private bool IsValidTel(string tel)
+        private bool IsValidTel(string tel) //TODO: Implementieren.
         {
-            if (string.IsNullOrEmpty(tel))
-            {
-                return true;
-            }
-
-
-            string pattern = @"^(\(?\d{3}\) ?)?\d{3}-\d{4}$";
-
-            return Regex.IsMatch(tel, pattern);
+            return true;
         }
     }
 }

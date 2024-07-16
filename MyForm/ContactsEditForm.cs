@@ -11,7 +11,7 @@ namespace MyForm
         private object id;
         private string loc;
         private CheckBox updateCheckBox;
-        private ContactsForm contactForm;
+        private ContactsForm contactForm; //TODO: Alle Felder sollen editierbar angezeigt werden.
 
         TextBox textBox;
         string txt;

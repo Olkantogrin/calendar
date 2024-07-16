@@ -49,6 +49,7 @@ namespace MyForm
 
         }
 
+
         private void CreateDataGridView()
         {
             dataGridView = new DataGridView();
@@ -79,13 +80,29 @@ namespace MyForm
             column.HeaderText = "";
             dataGridView.Columns.Add(column);
 
+         
+
             dataGridView.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridView_RowsAdded);
 
             ContactDao contactDao = new ContactDao();
             dataGridView.DataSource = contactDao.GetContacts();
             dataGridView.DataMember = "contacts";
 
+            dataGridView.DataBindingComplete += (sender, e) => HideUnwantedColumns();
+
             Controls.Add(dataGridView);
+        }
+
+        private void HideUnwantedColumns()
+        {
+            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity" };
+            foreach (string columnName in unwantedColumns)
+            {
+                if (dataGridView.Columns[columnName] != null)
+                {
+                    dataGridView.Columns[columnName].Visible = false;
+                }
+            }
         }
 
         private void DataGridView_AddClick(object sender, EventArgs e)
