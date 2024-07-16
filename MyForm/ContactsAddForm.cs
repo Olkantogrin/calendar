@@ -108,9 +108,7 @@ namespace MyForm
 
             bool isClose = true;
             bool isValidTel = IsValidTel(contactTel);
-
-            MessageBox.Show(isValidTel.ToString());
-
+            
             bool isValidMail = IsValidMail(contactMail);
 
           
@@ -179,11 +177,10 @@ namespace MyForm
                 return true;
             }
             
-            tel = tel.Trim();
+            tel = tel.Replace(" ", "");
+            MessageBox.Show(tel);
+            var r = new Regex(@"^\+?[0-9]+$");
 
-            if (string.IsNullOrEmpty(tel))
-                    return false;
-            var r = new Regex(@"^\+?(\(?[0-9]{3}\)?[-.●]?[0-9]{3}[-.●]?[0-9]{4})$");
             return r.IsMatch(tel);
 
             
