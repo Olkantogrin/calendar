@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Windows.Forms;
@@ -41,9 +42,9 @@ namespace MyForm
                 return dataSet;
         }
 
-        public string GetEntryForId(string id)
+        public string[] GetEntryForId(string id)
         {
-            string name = "";
+            string[] contact = new string[5];
 
             string connectionString = "Data Source=cal.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
@@ -58,7 +59,11 @@ namespace MyForm
                     {
                         while (reader.Read())
                         {
-                            name = reader["name"].ToString();
+                            contact[0] = reader["name"].ToString();
+                            contact[1] = reader["streetandnumber"].ToString();
+                            contact[2] = reader["postalcodeandcity"].ToString();
+                            contact[3] = reader["tel"].ToString();
+                            contact[4] = reader["mail"].ToString();
 
                         }
 
@@ -69,7 +74,7 @@ namespace MyForm
                 connection.Close();
             }
 
-            return name;
+            return contact;
         }
 
         
@@ -98,17 +103,21 @@ namespace MyForm
             
         }
 
-        public void UpdateContactForId(string id, string newText)
+        public void UpdateContactForId(string id, string newText, string streetAndNumber, string postalcodeAndCity, string tel, string mail)
         {
             string connectionString = "Data Source=cal.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
 
-                string sql = "UPDATE contacts SET name = @name WHERE id = @idd";
+                string sql = "UPDATE contacts SET name = @name, streetandnumber = @san, postalcodeandcity = @poc, tel = @tel, mail = @mail WHERE id = @idd";
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@name", newText);
+                    command.Parameters.AddWithValue("@san", streetAndNumber);
+                    command.Parameters.AddWithValue("@poc", postalcodeAndCity);
+                    command.Parameters.AddWithValue("@tel", tel);
+                    command.Parameters.AddWithValue("@mail", mail);
                     command.Parameters.AddWithValue("@idd", id);
                     command.ExecuteNonQuery();
                 }

@@ -40,6 +40,8 @@ namespace MyForm
 
             prepareMonthCalendar();
 
+            //TODO: Nochmal das monthly repeat anschauen.
+
             // Hinzufügen des MonthCalendar zur Form
             Controls.Add(monthCalendar);
 
@@ -273,13 +275,16 @@ namespace MyForm
             ReStartScheduler();
         }
 
+
         private void DrawCalendarForFreshMonth(int month, int year)
         {
+            
             DateDao dateDao = new DateDao();
 
             List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(month, year);
              
             foreach(DateTime selectedDate in selectedDates) {
+
                 monthCalendar.AddBoldedDate(selectedDate);
             }
             monthCalendar.UpdateBoldedDates();
@@ -368,7 +373,7 @@ namespace MyForm
 
                     string endHour = end.ToString().Substring(0, 5);
 
-                    bool isTextEmpty = String.IsNullOrEmpty(text);
+                    bool isTextEmpty = string.IsNullOrEmpty(text);
 
                     if (isTextEmpty) {
                         text = resourceManager.GetString("my event");
@@ -390,42 +395,9 @@ namespace MyForm
                     {
                         repetitionType = "y"; // Jährliche Wiederholung
                     }
-                    /*
-                    else if (selectedRepetitionIndex == 3)
-                    {
-                        repetitionType = "w"; // wöchentliche Wiederholung
-                    }
-                    */
 
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
-
-                    /*
-                    if ("w".Equals(repetitionType))
-                    {
-                        
-                        string dateStringS = d.Start; string dateStringE = d.End;
-
-                        DateTime startDate = DateTime.ParseExact(dateStringS, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-                        DateTime endDate = DateTime.ParseExact(dateStringE, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
-
-                        DateTime endOfYear = new DateTime(startDate.Year, 12, DateTime.DaysInMonth(startDate.Year, 12), 23, 59, 59);
-
-                        monthCalendar.AddBoldedDate(startDate);
-
-                        DateTime currentDate = endDate;
-                        while (currentDate < endOfYear)
-                        {
-                            currentDate = currentDate.AddDays(7);
-                            if (currentDate <= endOfYear)
-                            {
-                                monthCalendar.AddBoldedDate(currentDate);
-                            }
-                        }
-                        monthCalendar.UpdateBoldedDates();
-                    }
-                    else { 
-                    */
 
                     List<Date> datelist = new List<Date>();
                     datelist.Add(d);
@@ -433,15 +405,13 @@ namespace MyForm
                     Span span = new Span();
 
                     List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(datelist);
-                    
+
                     foreach (DateTime selectedDate in selectedDates)
                     {
                         monthCalendar.AddBoldedDate(selectedDate);
                     }
                     monthCalendar.UpdateBoldedDates();
-
-                    //}
-
+                    
                     DateDao dateDao = new DateDao();
                     dateDao.SaveAppointment(d);
                 

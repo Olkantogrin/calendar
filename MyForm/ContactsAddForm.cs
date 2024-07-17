@@ -178,7 +178,6 @@ namespace MyForm
             }
             
             tel = tel.Replace(" ", "");
-            MessageBox.Show(tel);
             var r = new Regex(@"^\+?[0-9]+$");
 
             return r.IsMatch(tel);

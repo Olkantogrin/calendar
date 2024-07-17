@@ -97,6 +97,8 @@ namespace MyForm
 
             CreateDataGridViewWithReadOnly(selectedDate, false);
 
+          
+
             Controls.Add(dataGridView);
 
             CreateDataGridViewContacts();
@@ -147,21 +149,42 @@ namespace MyForm
 
             dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
 
+            dataGridView.DataBindingComplete += (sender, e) => HideUnwantedColumns();
+
             ContactDao contactDao = new ContactDao();
 
             dataGridViewC.DataSource = contactDao.GetContacts();
             dataGridViewC.DataMember = "contacts";
+            
 
             Controls.Add(dataGridViewC);
         }
 
+        private void HideUnwantedColumns()
+        {
+            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity" };
+            foreach (string columnName in unwantedColumns)
+            {
+                if (dataGridViewC.Columns[columnName] != null)
+                {
+                    dataGridViewC.Columns[columnName].Visible = false;
+                }
+            }
+
+        }
+
         private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
-           
-                for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+
+
+
+            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
                 {
                     // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
                     dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
+
+                 
+
                 }
             
         }

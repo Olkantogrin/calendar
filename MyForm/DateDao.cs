@@ -31,6 +31,8 @@ namespace MyForm
             }
         }
 
+
+        
         public List<DateTime> GetSelectedDatesForMonthAndYear(int month, int year)
         {
             List<Date> dates = new List<Date>();
@@ -46,7 +48,6 @@ namespace MyForm
 
                 connection.Open();
 
-                //alt: string sql = $"SELECT * FROM dates WHERE start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%' ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2)|| ' ' || substr(start, 12, 5)";
                 string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR((start LIKE '%.{formattedYear}%' OR end LIKE '%.{formattedYear}%') AND repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
@@ -67,38 +68,11 @@ namespace MyForm
 
                         CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                         List<Date> newDates = new List<Date>();
-
-                        foreach (Date ddd in dates)
-                        {
-                            /*
-                            if ("w".Equals(ddd.Repeat))
-                            {
-                                string startDate = ddd.Start;
-                                string endDate = ddd.End;
-
-                                DateTime currentDateS = DateTime.ParseExact(startDate, "dd.MM.yyyy HH:mm", culture);
-                                DateTime currentDate = DateTime.ParseExact(endDate, "dd.MM.yyyy HH:mm", culture);
-
-                                DateTime endOfYear = new DateTime(currentDateS.Year, 12, DateTime.DaysInMonth(currentDateS.Year, 12), 23, 59, 59);
-
-                                while (currentDate < endOfYear)
-                                {
-                                    currentDateS = currentDateS.AddDays(7);
-                                    currentDate = currentDate.AddDays(7);
-                                    if (currentDate <= endOfYear)
-                                    {
-                                        string start = currentDateS.ToString();
-                                        string end = currentDate.ToString();
-
-                                        Date d = new Date(ddd.Text, start.Substring(0, start.Length - 3), end.Substring(0, end.Length - 3), "w");
-                                        newDates.Add(d);
-                                    }
-                                }
-                            }
-                            */
-                        }
+                        
 
                         dates.AddRange(newDates);
+
+                      
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
                     }
@@ -110,7 +84,7 @@ namespace MyForm
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
             return selectedDates;
         }
-
+        
 
 
 
@@ -203,7 +177,7 @@ namespace MyForm
 
                 else if ("m".Equals(d.Repeat))
                 {
-                    SaveMonthly(month, datesresult, d);
+                    GetMonthly(month, datesresult, d);
 
                 }
 
@@ -220,7 +194,7 @@ namespace MyForm
 
         
 
-        private void SaveMonthly(int month, List<Date> datesresult, Date d)
+        private void GetMonthly(int month, List<Date> datesresult, Date d)
         {
             CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
             DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
@@ -252,9 +226,7 @@ namespace MyForm
                 d.End = updatedEnd;
 
                 datesresult.Add(d);
-
-
-
+                
             }
         }
 
