@@ -5,8 +5,8 @@ using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace MyForm
-{
+namespace MyForm 
+{ 
     public partial class AppointmentForm : Form
     {
         public int SelectedRepetitionIndex { get; private set; }
@@ -43,7 +43,6 @@ namespace MyForm
         private Button saveButton;
         
         public DataGridView dataGridView;
-        private DataGridView dataGridViewC;
 
         DateTime selectedDateForUpDate;
 
@@ -100,9 +99,7 @@ namespace MyForm
           
 
             Controls.Add(dataGridView);
-
-            CreateDataGridViewContacts();
-
+            
             closeButton = new Button();
             closeButton.Text = resourceManager.GetString("close");
             closeButton.Location = new System.Drawing.Point(120, 370);
@@ -119,76 +116,7 @@ namespace MyForm
 
         }
 
-        private void CreateDataGridViewContacts()
-        {
-            dataGridViewC = new DataGridView();
-            dataGridViewC.Location = new System.Drawing.Point(380, 70);
-            dataGridViewC.Size = new System.Drawing.Size(400, 300);
-
-            dataGridViewC.ScrollBars = ScrollBars.Vertical;
-            dataGridViewC.AllowUserToAddRows = false;
-            dataGridViewC.ReadOnly = true;
-            dataGridViewC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "id";
-            column.Name = "id";
-            dataGridViewC.Columns.Add(column);
-
-            dataGridViewC.Columns["id"].Visible = false;
-
-            column = new DataGridViewTextBoxColumn();
-            column.DataPropertyName = "name";
-            column.Name = "name";
-            dataGridViewC.Columns.Add(column);
-
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "xColumn";
-            column.HeaderText = "";
-            dataGridViewC.Columns.Add(column);
-
-            dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
-
-            dataGridView.DataBindingComplete += (sender, e) => HideUnwantedColumns();
-
-            ContactDao contactDao = new ContactDao();
-
-            dataGridViewC.DataSource = contactDao.GetContacts();
-            dataGridViewC.DataMember = "contacts";
-            
-
-            Controls.Add(dataGridViewC);
-        }
-
-        private void HideUnwantedColumns()
-        {
-            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity" };
-            foreach (string columnName in unwantedColumns)
-            {
-                if (dataGridViewC.Columns[columnName] != null)
-                {
-                    dataGridViewC.Columns[columnName].Visible = false;
-                }
-            }
-
-        }
-
-        private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-
-
-
-            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
-                {
-                    // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
-                    dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
-
-                 
-
-                }
-            
-        }
-
+ 
         private void CloseButton_Click(object sender, EventArgs e)
         {
             closeButtonClicked = true;

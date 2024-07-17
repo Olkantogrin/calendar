@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
@@ -22,6 +23,8 @@ namespace MyForm
         private DateTime originalStartDate;
         private DateTime originalEndDate;
 
+        private DataGridView dataGridViewC;
+
         public DetailsForm(object id, AppointmentForm appointmentForm)
         {
 
@@ -31,8 +34,111 @@ namespace MyForm
             this.id = id;
             InitializeComponent();
             InitializeAppointmentControls();
-           
+
+            CreateDataGridViewContacts();
+
         }
+
+        private void CreateDataGridViewContacts()
+        {
+            dataGridViewC = new DataGridView();
+            dataGridViewC.Location = new System.Drawing.Point(380, 70);
+            dataGridViewC.Size = new System.Drawing.Size(300, 300);
+
+            dataGridViewC.ScrollBars = ScrollBars.Vertical;
+            dataGridViewC.AllowUserToAddRows = false;
+            dataGridViewC.ReadOnly = true;
+            dataGridViewC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "id";
+            column.Name = "id";
+            dataGridViewC.Columns.Add(column);
+
+            dataGridViewC.Columns["id"].Visible = false;
+
+            column = new DataGridViewTextBoxColumn();
+            column.DataPropertyName = "name";
+            column.Name = "name";
+            dataGridViewC.Columns.Add(column);
+
+            column = new DataGridViewTextBoxColumn();
+            column.Name = "xColumn";
+            column.HeaderText = "";
+            dataGridViewC.Columns.Add(column);
+
+            dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
+
+            dataGridViewC.DataBindingComplete += (sender, e) => HideUnwantedColumnsAndMarkLinked();
+
+            ContactDao contactDao = new ContactDao();
+
+            dataGridViewC.DataSource = contactDao.GetContacts();
+            dataGridViewC.DataMember = "contacts";
+
+            dataGridViewC.CellClick += DataGridViewC_CellClick;
+
+            Controls.Add(dataGridViewC);
+        }
+
+        private void HideUnwantedColumnsAndMarkLinked()
+        {
+
+            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity" };
+            foreach (string columnName in unwantedColumns)
+            {
+                if (dataGridViewC.Columns[columnName] != null)
+                {
+                    dataGridViewC.Columns[columnName].Visible = false;
+                }
+            }
+
+            ContactDao contactDao = new ContactDao();
+            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id); //TODO: Testen und weiter implementieren.
+
+            MessageBox.Show("Testen und weiter implementieren.");
+
+            foreach (DataGridViewRow row in dataGridViewC.Rows)
+            {
+                if (row.Cells["id"].Value != null && coupleIDs.Contains(row.Cells["id"].Value.ToString()))
+                {
+                row.DefaultCellStyle.BackColor = Color.Green;
+                }
+            }
+        }
+
+        private void DataGridViewC_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            if (e.ColumnIndex == dataGridViewC.Columns["xColumn"].Index && e.RowIndex >= 0)
+            {
+                if (dataGridViewC.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "+")
+                {
+                    ContactDao contactDao = new ContactDao();
+
+                    contactDao.Couple(this.id.ToString(), dataGridViewC.Rows[e.RowIndex].Cells["id"].Value.ToString());
+                    
+
+                }
+            }
+        }
+
+        private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+
+
+
+            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+            {
+                // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
+                dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
+
+
+
+            }
+
+        }
+
 
         private void InitializeAppointmentControls()
         {

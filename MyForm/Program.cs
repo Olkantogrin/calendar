@@ -40,9 +40,6 @@ namespace MyForm
 
             prepareMonthCalendar();
 
-            //TODO: Nochmal das monthly repeat anschauen.
-
-            // Hinzufügen des MonthCalendar zur Form
             Controls.Add(monthCalendar);
 
 
