@@ -230,13 +230,18 @@ namespace MyForm
             }
         }
 
-        internal void UpdateDateWithId(object id, string text, DateTime dateTimeStart, DateTime dateTimeEnd)
+        public void UpdateDateWithId(object id, string text, DateTime dateTimeStart, DateTime dateTimeEnd)
         {
             string idd = id.ToString();
             string updatedText = text;
             string start = dateTimeStart.ToString();
             string end = dateTimeEnd.ToString();
 
+            string locale = GetLocale();
+
+            DateLocaleConverter converter = DateLocaleConverter.Instance;
+            start = converter.ConvertDateAccordingToLocale(locale, start);
+            end = converter.ConvertDateAccordingToLocale(locale, end);
 
             string pattern = @"(\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}):\d{2}";
             string replacement = "$1";
@@ -244,7 +249,6 @@ namespace MyForm
             start = Regex.Replace(start, pattern, replacement);
             end = Regex.Replace(end, pattern, replacement);
 
-            
             string connectionString = "Data Source=cal.db;Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {

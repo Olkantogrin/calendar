@@ -135,8 +135,8 @@
   <data name="no repetition" xml:space="preserve">
     <value>nicht wiederholen</value>
   </data>
-  <data name="read file" xml:space="preserve">
-    <value>Datei einlesen</value>
+  <data name="read ics" xml:space="preserve">
+    <value>ICS einlesen</value>
   </data>
   <data name="save" xml:space="preserve">
     <value>speichern</value>

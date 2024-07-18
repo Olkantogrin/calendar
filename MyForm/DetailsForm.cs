@@ -274,9 +274,12 @@ namespace MyForm
                         {
                             row.DefaultCellStyle.BackColor = Color.Red;
                             row.Cells["text"].Value = textBoxDate.Text;
-                            row.Cells["start"].Value = dateTimePickerStart.Value;
-                            row.Cells["end"].Value = dateTimePickerEnd.Value;
-                            break; // Keine weitere Suche notwendig, sobald die Zeile gefunden wurde
+
+                            DateLocaleConverter converter = DateLocaleConverter.Instance;
+                            
+                            row.Cells["start"].Value = converter.ConvertDateAccordingToLocale(dateDao.GetLocale(), dateTimePickerStart.Value.ToString());
+                            row.Cells["end"].Value = converter.ConvertDateAccordingToLocale(dateDao.GetLocale(), dateTimePickerEnd.Value.ToString());
+                            break;
                         }
                     }
 

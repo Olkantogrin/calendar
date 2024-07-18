@@ -75,7 +75,7 @@ namespace MyForm
             
             Button readerButtonICS = new Button
             {
-                Text = resourceManager.GetString("read file"),
+                Text = resourceManager.GetString("read ics"),
                 Location = new System.Drawing.Point(170, 200),
                 Size = new System.Drawing.Size(100, 25)
             };

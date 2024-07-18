@@ -90,6 +90,7 @@
     </Compile>
     <Compile Include="Date.cs" />
     <Compile Include="DateDao.cs" />
+    <Compile Include="DateLocaleConverter.cs" />
     <Compile Include="DetailsForm.cs">
       <SubType>Form</SubType>
     </Compile>

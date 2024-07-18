@@ -264,14 +264,16 @@ namespace MyForm
                 Width = 200
             };
             Controls.Add(textBoxDate);
-
-         
+            
 
             dateTimePickerStart = new DateTimePicker();
             dateTimePickerStart.Format = DateTimePickerFormat.Custom;
             dateTimePickerStart.CustomFormat = "dd.MM.yyyy HH:mm";
             dateTimePickerStart.Location = new Point(10, 70);
-            
+
+            DateLocaleConverter converter = DateLocaleConverter.Instance;
+            firstPickedDate = converter.ConvertDateAccordingToLocale(locale, firstPickedDate);
+
             dateTimePickerStart.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
             dateTimePickerStart.ValueChanged += DateTimePickerStart_ValueChanged;
@@ -280,7 +282,7 @@ namespace MyForm
             dateTimePickerEnd.Format = DateTimePickerFormat.Custom;
             dateTimePickerEnd.CustomFormat = "dd.MM.yyyy HH:mm";
             dateTimePickerEnd.Location = new Point(10, 95);
-
+            
             dateTimePickerEnd.Value = DateTime.ParseExact(firstPickedDate, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
             dateTimePickerEnd.ValueChanged += DateTimePickerEnd_ValueChanged;
