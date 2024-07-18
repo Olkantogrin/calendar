@@ -98,7 +98,12 @@ namespace MyForm
             string tel = telBox.Text;
             string mail = mailBox.Text;
 
-            if (!txt.Equals(newText) && updateCheckBox.Checked == true) {
+            if ((!txt.Equals(newText) && updateCheckBox.Checked == true)
+            || (!streetAndNumber.Equals(newText) && updateCheckBox.Checked == true)
+            || (!txt.Equals(postalcodeAndCity) && updateCheckBox.Checked == true)
+            || (!txt.Equals(tel) && updateCheckBox.Checked == true)
+            || (!txt.Equals(mail) && updateCheckBox.Checked == true))
+            {
                 ContactDao contactDao = new ContactDao();
                 contactDao.UpdateContactForId(id.ToString(), newText, streetAndNumber, postalcodeAndCity, tel, mail);
                 contactForm.InitializeContactControls();

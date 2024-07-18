@@ -114,7 +114,7 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM contacts WHERE id_date = '{dateID}' AND iscouple = '1'";
+                string sql = $"SELECT * FROM couples WHERE id_date = '{dateID}' AND iscouple = '1'";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {

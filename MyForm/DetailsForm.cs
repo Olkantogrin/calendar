@@ -41,6 +41,7 @@ namespace MyForm
 
         private void CreateDataGridViewContacts()
         {
+
             dataGridViewC = new DataGridView();
             dataGridViewC.Location = new System.Drawing.Point(380, 70);
             dataGridViewC.Size = new System.Drawing.Size(300, 300);
@@ -94,17 +95,32 @@ namespace MyForm
             }
 
             ContactDao contactDao = new ContactDao();
-            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id); //TODO: Testen und weiter implementieren.
 
-            MessageBox.Show("Testen und weiter implementieren.");
+            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id);
 
             foreach (DataGridViewRow row in dataGridViewC.Rows)
             {
                 if (row.Cells["id"].Value != null && coupleIDs.Contains(row.Cells["id"].Value.ToString()))
                 {
-                row.DefaultCellStyle.BackColor = Color.Green;
+                    row.DefaultCellStyle.BackColor = Color.Green;
+             
                 }
+                else { row.DefaultCellStyle.BackColor = Color.White;  }
             }
+             
+                
+        }
+
+        private void RebuildDataGridView()
+        {
+            if (dataGridViewC != null)
+            {
+                Controls.Remove(dataGridViewC);
+                dataGridViewC.Dispose(); // Dispose of the existing DataGridView to free resources
+            }
+
+            // Re-create the DataGridView
+            CreateDataGridViewContacts();
         }
 
         private void DataGridViewC_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -117,10 +133,12 @@ namespace MyForm
                     ContactDao contactDao = new ContactDao();
 
                     contactDao.Couple(this.id.ToString(), dataGridViewC.Rows[e.RowIndex].Cells["id"].Value.ToString());
-                    
 
                 }
             }
+
+            RebuildDataGridView();
+
         }
 
         private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
