@@ -22,7 +22,7 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = "SELECT * FROM contacts";
+                string sql = "SELECT * FROM contacts ORDER BY name";
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
@@ -51,7 +51,7 @@ namespace MyForm
             {
                 connection.Open();
 
-                string sql = $"SELECT * FROM contacts WHERE id = '{id}'";
+                string sql = $"SELECT * FROM contacts WHERE id = '{id}' ORDER BY name";
                 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {

@@ -153,6 +153,8 @@ namespace MyForm
             return 0;
         }
 
+        //TODO: Die Sortierung der markierten Kontakte funktioniert noch nicht richtig.
+
         private void RebuildDataGridView()
         {
             if (dataGridViewC != null)
