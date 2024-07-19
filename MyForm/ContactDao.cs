@@ -133,6 +133,7 @@ namespace MyForm
                 connection.Close();
             }
 
+
             return contactIDs;
 
         }

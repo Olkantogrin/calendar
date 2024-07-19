@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Resources;
@@ -41,7 +42,6 @@ namespace MyForm
 
         private void CreateDataGridViewContacts()
         {
-
             dataGridViewC = new DataGridView();
             dataGridViewC.Location = new System.Drawing.Point(380, 70);
             dataGridViewC.Size = new System.Drawing.Size(300, 300);
@@ -70,22 +70,53 @@ namespace MyForm
 
             dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
 
-            dataGridViewC.DataBindingComplete += (sender, e) => HideUnwantedColumnsAndMarkLinked();
+            dataGridViewC.DataBindingComplete += (sender, e) =>
+            {
+                HideUnwantedColumns();
+                MarkLinked();
+            };
 
             ContactDao contactDao = new ContactDao();
 
-            dataGridViewC.DataSource = contactDao.GetContacts();
-            dataGridViewC.DataMember = "contacts";
+
+            DataSet contactsDataSet = contactDao.GetContacts();
+            
+            DataView contactsView = contactsDataSet.Tables[0].DefaultView;
+
+            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id);
+
+            if (!contactsDataSet.Tables[0].Columns.Contains("SortKey"))
+            {
+                contactsDataSet.Tables[0].Columns.Add("SortKey", typeof(int));
+            }
+
+
+            foreach (DataRow row in contactsDataSet.Tables[0].Rows)
+            {
+                if (coupleIDs.Contains(row["id"].ToString()))
+                {
+                    row["SortKey"] = 0;
+                }
+                else
+                {
+                    row["SortKey"] = 1; 
+                }
+            }
+
+
+            contactsView.Sort = "SortKey ASC";
+
+
+            dataGridViewC.DataSource = contactsView;
 
             dataGridViewC.CellClick += DataGridViewC_CellClick;
 
             Controls.Add(dataGridViewC);
         }
 
-        private void HideUnwantedColumnsAndMarkLinked()
+        private void HideUnwantedColumns()
         {
-
-            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity" };
+            string[] unwantedColumns = { "streetandnumber", "postalcode", "tel", "mail", "postalcodeandcity", "SortKey" };
             foreach (string columnName in unwantedColumns)
             {
                 if (dataGridViewC.Columns[columnName] != null)
@@ -93,7 +124,10 @@ namespace MyForm
                     dataGridViewC.Columns[columnName].Visible = false;
                 }
             }
+        }
 
+        private void MarkLinked()
+        {
             ContactDao contactDao = new ContactDao();
 
             List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id);
@@ -103,12 +137,20 @@ namespace MyForm
                 if (row.Cells["id"].Value != null && coupleIDs.Contains(row.Cells["id"].Value.ToString()))
                 {
                     row.DefaultCellStyle.BackColor = Color.Green;
-             
                 }
-                else { row.DefaultCellStyle.BackColor = Color.White;  }
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                }
             }
-             
-                
+        }
+
+        private int CompareColors(Color color1, Color color2)
+        {
+            if (color1 == color2) return 0;
+            if (color1 == Color.Green) return -1;
+            if (color2 == Color.Green) return 1;
+            return 0;
         }
 
         private void RebuildDataGridView()
@@ -116,10 +158,10 @@ namespace MyForm
             if (dataGridViewC != null)
             {
                 Controls.Remove(dataGridViewC);
-                dataGridViewC.Dispose(); // Dispose of the existing DataGridView to free resources
+                dataGridViewC.Dispose(); 
             }
 
-            // Re-create the DataGridView
+
             CreateDataGridViewContacts();
         }
 
