@@ -70,7 +70,12 @@ namespace MyForm
             column.Name = "name";
             dataGridViewC.Columns.Add(column);
 
-
+            column = new DataGridViewTextBoxColumn();
+            column.Name = "isGreen";
+            column.DataPropertyName = "isGreen";
+            column.Visible = false;
+            dataGridViewC.Columns.Add(column);
+            
             column = new DataGridViewTextBoxColumn();
             column.Name = "xColumn";
             column.HeaderText = "";
@@ -82,7 +87,6 @@ namespace MyForm
             dataGridViewC.DataBindingComplete += (sender, e) =>
             {
                 HideUnwantedColumns();
-                Sort();
                 
             };
 
@@ -120,7 +124,6 @@ namespace MyForm
         {
             ContactDao contactDao = new ContactDao();
 
-            // Prüfen, ob die Zelle in der "xColumn" Spalte geklickt wurde
             if (e.ColumnIndex == dataGridViewC.Columns["xColumn"].Index)
             {
                 var cellValue = dataGridViewC.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
@@ -132,6 +135,7 @@ namespace MyForm
 
                         contactDao.ToggleCouple(this.id.ToString(), idValue.ToString());
                     }
+
 
                     CreateDataGridViewContacts();
 
@@ -150,14 +154,14 @@ namespace MyForm
                 dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
 
                 string cellValue = dataGridViewC.Rows[i].Cells["id"].Value.ToString();
+
                 bool isLink = contactDao.GetLinkedContact(this.id.ToString(), cellValue);
 
                 if (dataGridViewC.Rows[i].Cells["id"].Value != null && isLink)
                 {
                     dataGridViewC.Rows[i].DefaultCellStyle.BackColor = Color.Green;
-                    
-                }
 
+                }
             }
 
         }

@@ -170,7 +170,7 @@ namespace MyForm
 
                 if (count > 0)
                 {
-                    
+
                     string sql2 = "UPDATE couples SET iscouple = CASE WHEN iscouple = '0' THEN '1' WHEN iscouple = '1' THEN '0' END WHERE id_date = @dateID AND id_contact = @contactID";
                     using (SQLiteCommand command = new SQLiteCommand(sql2, connection))
                     {
@@ -198,6 +198,8 @@ namespace MyForm
                 connection.Close();
             }
         }
+
+        
 
         public void UpdateContactForId(string id, string newText, string streetAndNumber, string postalcodeAndCity, string tel, string mail)
         {
