@@ -149,6 +149,56 @@ namespace MyForm
 
         }
 
+        public void ToggleCouple(string dateID, string contactID)
+        {
+
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                int count = 0;
+
+                connection.Open();
+
+                string sql = $"SELECT COUNT(*) FROM couples WHERE id_date = @dateID AND id_contact = @contactID";
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@dateID", dateID);
+                    command.Parameters.AddWithValue("@contactID", contactID);
+
+                    count = Convert.ToInt32(command.ExecuteScalar());
+                }
+
+                if (count > 0)
+                {
+                    
+                    string sql2 = "UPDATE couples SET iscouple = CASE WHEN iscouple = '0' THEN '1' WHEN iscouple = '1' THEN '0' END WHERE id_date = @dateID AND id_contact = @contactID";
+                    using (SQLiteCommand command = new SQLiteCommand(sql2, connection))
+                    {
+                        command.Parameters.AddWithValue("@dateID", dateID);
+                        command.Parameters.AddWithValue("@contactID", contactID);
+                        command.ExecuteNonQuery();
+
+                    }
+                    
+                }
+                else
+                {
+
+
+
+                    string sql3 = "INSERT INTO couples (id_date, id_contact, iscouple) VALUES (@dateID, @contactID, '1')";
+                    using (SQLiteCommand command = new SQLiteCommand(sql3, connection))
+                    {
+                        command.Parameters.AddWithValue("@dateID", dateID);
+                        command.Parameters.AddWithValue("@contactID", contactID);
+                        command.ExecuteNonQuery();
+
+                    }
+                }
+                connection.Close();
+            }
+        }
+
         public void UpdateContactForId(string id, string newText, string streetAndNumber, string postalcodeAndCity, string tel, string mail)
         {
             string connectionString = "Data Source=cal.db;Version=3;";

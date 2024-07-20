@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
@@ -69,6 +70,7 @@ namespace MyForm
             column.Name = "name";
             dataGridViewC.Columns.Add(column);
 
+
             column = new DataGridViewTextBoxColumn();
             column.Name = "xColumn";
             column.HeaderText = "";
@@ -80,6 +82,7 @@ namespace MyForm
             dataGridViewC.DataBindingComplete += (sender, e) =>
             {
                 HideUnwantedColumns();
+                Sort();
                 
             };
 
@@ -88,6 +91,7 @@ namespace MyForm
             Controls.Add(dataGridViewC);
         }
 
+         
 
         private void HideUnwantedColumns()
         {
@@ -125,11 +129,11 @@ namespace MyForm
                     var idValue = dataGridViewC.Rows[e.RowIndex].Cells["id"].Value;
                     if (idValue != null)
                     {
-                        MessageBox.Show(idValue.ToString()); //TODO: Hier brauche ich eine Methode, die in couples für die Spalte = this.id und idValue.ToString() togglet.
+
+                        contactDao.ToggleCouple(this.id.ToString(), idValue.ToString());
                     }
 
                     CreateDataGridViewContacts();
-
 
                 }
             }
@@ -148,7 +152,11 @@ namespace MyForm
                 string cellValue = dataGridViewC.Rows[i].Cells["id"].Value.ToString();
                 bool isLink = contactDao.GetLinkedContact(this.id.ToString(), cellValue);
 
-                MessageBox.Show("Auslesen: " + cellValue + "   " + isLink.ToString());
+                if (dataGridViewC.Rows[i].Cells["id"].Value != null && isLink)
+                {
+                    dataGridViewC.Rows[i].DefaultCellStyle.BackColor = Color.Green;
+                    
+                }
 
             }
 
