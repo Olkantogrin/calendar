@@ -42,6 +42,11 @@ namespace MyForm
 
         private void CreateDataGridViewContacts()
         {
+            if (dataGridViewC != null) {
+
+                Controls.Remove(dataGridViewC);
+            }
+
             dataGridViewC = new DataGridView();
             dataGridViewC.Location = new System.Drawing.Point(380, 70);
             dataGridViewC.Size = new System.Drawing.Size(300, 300);
@@ -50,6 +55,7 @@ namespace MyForm
             dataGridViewC.AllowUserToAddRows = false;
             dataGridViewC.ReadOnly = true;
             dataGridViewC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
 
             DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
             column.DataPropertyName = "id";
@@ -68,51 +74,20 @@ namespace MyForm
             column.HeaderText = "";
             dataGridViewC.Columns.Add(column);
 
+            dataGridViewC.CellClick += DataGridViewC_CellClick;
             dataGridViewC.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridViewC_RowsAdded);
 
             dataGridViewC.DataBindingComplete += (sender, e) =>
             {
                 HideUnwantedColumns();
-                MarkLinked();
+                
             };
 
-            ContactDao contactDao = new ContactDao();
-
-
-            DataSet contactsDataSet = contactDao.GetContacts();
-            
-            DataView contactsView = contactsDataSet.Tables[0].DefaultView;
-
-            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id);
-
-            if (!contactsDataSet.Tables[0].Columns.Contains("SortKey"))
-            {
-                contactsDataSet.Tables[0].Columns.Add("SortKey", typeof(int));
-            }
-
-
-            foreach (DataRow row in contactsDataSet.Tables[0].Rows)
-            {
-                if (coupleIDs.Contains(row["id"].ToString()))
-                {
-                    row["SortKey"] = 0;
-                }
-                else
-                {
-                    row["SortKey"] = 1; 
-                }
-            }
-
-
-            contactsView.Sort = "SortKey ASC";
-
-
-            dataGridViewC.DataSource = contactsView;
-
-            dataGridViewC.CellClick += DataGridViewC_CellClick;
+            LoadDataIntoDataGridView();
 
             Controls.Add(dataGridViewC);
         }
+
 
         private void HideUnwantedColumns()
         {
@@ -126,76 +101,54 @@ namespace MyForm
             }
         }
 
-        private void MarkLinked()
+        private void LoadDataIntoDataGridView()
         {
             ContactDao contactDao = new ContactDao();
 
-            List<string> coupleIDs = contactDao.GetContactIDsForIDinLinkedCouples(this.id);
-
-            foreach (DataGridViewRow row in dataGridViewC.Rows)
+            DataSet contactsDataSet = contactDao.GetContacts();
+            if (contactsDataSet.Tables.Count > 0)
             {
-                if (row.Cells["id"].Value != null && coupleIDs.Contains(row.Cells["id"].Value.ToString()))
-                {
-                    row.DefaultCellStyle.BackColor = Color.Green;
-                }
-                else
-                {
-                    row.DefaultCellStyle.BackColor = Color.White;
-                }
+                dataGridViewC.DataSource = contactsDataSet.Tables[0];
             }
-        }
-
-        private int CompareColors(Color color1, Color color2)
-        {
-            if (color1 == color2) return 0;
-            if (color1 == Color.Green) return -1;
-            if (color2 == Color.Green) return 1;
-            return 0;
-        }
-
-        //TODO: Die Sortierung der markierten Kontakte funktioniert noch nicht richtig.
-
-        private void RebuildDataGridView()
-        {
-            if (dataGridViewC != null)
-            {
-                Controls.Remove(dataGridViewC);
-                dataGridViewC.Dispose(); 
-            }
-
-
-            CreateDataGridViewContacts();
         }
 
         private void DataGridViewC_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            ContactDao contactDao = new ContactDao();
 
-            if (e.ColumnIndex == dataGridViewC.Columns["xColumn"].Index && e.RowIndex >= 0)
+            // Prüfen, ob die Zelle in der "xColumn" Spalte geklickt wurde
+            if (e.ColumnIndex == dataGridViewC.Columns["xColumn"].Index)
             {
-                if (dataGridViewC.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "+")
+                var cellValue = dataGridViewC.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (cellValue != null && cellValue.ToString() == "+")
                 {
-                    ContactDao contactDao = new ContactDao();
+                    var idValue = dataGridViewC.Rows[e.RowIndex].Cells["id"].Value;
+                    if (idValue != null)
+                    {
+                        MessageBox.Show(idValue.ToString()); //TODO: Hier brauche ich eine Methode, die in couples für die Spalte = this.id und idValue.ToString() togglet.
+                    }
 
-                    contactDao.Couple(this.id.ToString(), dataGridViewC.Rows[e.RowIndex].Cells["id"].Value.ToString());
+                    CreateDataGridViewContacts();
+
 
                 }
             }
-
-            RebuildDataGridView();
-
         }
-
-        private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+            private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
 
-
+            ContactDao contactDao = new ContactDao();
 
             for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
             {
-                // Setzen des Wertes "x" für jede neue Zeile in der "xColumn" Spalte
+
+
                 dataGridViewC.Rows[i].Cells["xColumn"].Value = "+";
 
+                string cellValue = dataGridViewC.Rows[i].Cells["id"].Value.ToString();
+                bool isLink = contactDao.GetLinkedContact(this.id.ToString(), cellValue);
 
+                MessageBox.Show("Auslesen: " + cellValue + "   " + isLink.ToString());
 
             }
 
@@ -206,9 +159,6 @@ namespace MyForm
         {
 
             ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(DetailsForm).Assembly);
-            
-            //CreateDataGridViewWithReadOnly(id, true);
-            //Controls.Add(dataGridView);
 
             DateDao dateDao = new DateDao();
             Date date = dateDao.GetDateForId(id);
@@ -346,10 +296,9 @@ namespace MyForm
         private void CloseButton_Click(object sender, EventArgs e)
         {
 
-            // Zugriff auf die DataGridView aus der Hauptform (angenommen, sie heißt "appointmentForm")
+
             DataGridView dataGridView = appointmentForm.dataGridView;
 
-            // Durchlaufen der Zeilen in der DataGridView, um die entsprechende Zeile zu finden
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
                 if (row.Cells["id"].Value != null && row.Cells["id"].Value.Equals(id))
