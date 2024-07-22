@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace MyForm
 {
@@ -83,12 +82,20 @@ namespace MyForm
                 string connectionString = "Data Source=cal.db;Version=3;";
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    connection.Open(); 
+                    connection.Open();
 
-                    string sql = "INSERT INTO contacts (name, streetandnumber, postalcodeandcity, mail, tel) VALUES (@text, @streetAndNumber, @postalCodeAndCity, @tel, @mail)";   
+                string contactName = contact.Text;
+
+                string pattern = @"^\s+$";
+                
+                bool isWhitespaceOnly = Regex.IsMatch(contactName, pattern);
+
+                if (!isWhitespaceOnly) { 
+
+                string sql = "INSERT INTO contacts (name, streetandnumber, postalcodeandcity, mail, tel) VALUES (@text, @streetAndNumber, @postalCodeAndCity, @tel, @mail)";   
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                     {
-                    command.Parameters.AddWithValue("@text", contact.Text);
+                    command.Parameters.AddWithValue("@text", contactName);
                     command.Parameters.AddWithValue("@streetAndNumber", contact.ContactStreetAndNumber);
                     command.Parameters.AddWithValue("@postalCodeAndCity", contact.ContactPostalCodeAndCity);
                     command.Parameters.AddWithValue("@tel", contact.ContactTel);
@@ -100,7 +107,7 @@ namespace MyForm
                     }
                     connection.Close();
                 }
-            
+            }
         }
 
         public bool GetLinkedContact(string dateID, string contactID)

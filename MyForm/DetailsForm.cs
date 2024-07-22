@@ -29,7 +29,7 @@ namespace MyForm
 
         public DetailsForm(object id, AppointmentForm appointmentForm)
         {
-
+            
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
 
             this.appointmentForm = appointmentForm;
@@ -48,7 +48,11 @@ namespace MyForm
                 Controls.Remove(dataGridViewC);
             }
 
+            
+
             dataGridViewC = new DataGridView();
+
+
             dataGridViewC.Location = new System.Drawing.Point(380, 70);
             dataGridViewC.Size = new System.Drawing.Size(300, 300);
 
@@ -70,11 +74,6 @@ namespace MyForm
             column.Name = "name";
             dataGridViewC.Columns.Add(column);
 
-            column = new DataGridViewTextBoxColumn();
-            column.Name = "isGreen";
-            column.DataPropertyName = "isGreen";
-            column.Visible = false;
-            dataGridViewC.Columns.Add(column);
             
             column = new DataGridViewTextBoxColumn();
             column.Name = "xColumn";
@@ -120,29 +119,36 @@ namespace MyForm
             }
         }
 
+
+        
         private void DataGridViewC_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             ContactDao contactDao = new ContactDao();
+            
 
             if (e.ColumnIndex == dataGridViewC.Columns["xColumn"].Index)
             {
+
+
                 var cellValue = dataGridViewC.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
                 if (cellValue != null && cellValue.ToString() == "+")
                 {
                     var idValue = dataGridViewC.Rows[e.RowIndex].Cells["id"].Value;
                     if (idValue != null)
                     {
-
                         contactDao.ToggleCouple(this.id.ToString(), idValue.ToString());
                     }
 
 
                     CreateDataGridViewContacts();
 
+                
                 }
             }
         }
-            private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+
+
+        private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
 
             ContactDao contactDao = new ContactDao();
@@ -160,6 +166,7 @@ namespace MyForm
                 if (dataGridViewC.Rows[i].Cells["id"].Value != null && isLink)
                 {
                     dataGridViewC.Rows[i].DefaultCellStyle.BackColor = Color.Green;
+                    //dataGridViewC.Rows[i].DefaultCellStyle.BackColor = Color.Green;
 
                 }
             }
