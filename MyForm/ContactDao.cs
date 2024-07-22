@@ -239,6 +239,8 @@ namespace MyForm
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
+                if (!"45".Equals(id)) { 
+
                 connection.Open();
 
                 string sql = $"DELETE FROM contacts WHERE id = @id";
@@ -248,6 +250,7 @@ namespace MyForm
                     command.ExecuteNonQuery();
                 }
                 connection.Close();
+                }
             }
         }
     }
