@@ -41,6 +41,33 @@ namespace MyForm
                 return dataSet;
         }
 
+        public string GetEntryForEmptyString()
+        {
+            string id = "";
+
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string sql = $"SELECT id FROM contacts WHERE name = ' '";
+
+                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            id = reader["id"].ToString();
+                        }
+                    }
+                }
+                connection.Close();
+            }
+
+            return id;
+        }
+
         public string[] GetEntryForId(string id)
         {
             string[] contact = new string[5];
@@ -237,9 +264,11 @@ namespace MyForm
 
             string connectionString = "Data Source=cal.db;Version=3;";
 
+            string idEmpty = GetEntryForEmptyString();
+
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
-                if (!"45".Equals(id)) { 
+                if (!idEmpty.Equals(id)) { 
 
                 connection.Open();
 
