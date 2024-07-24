@@ -16,6 +16,7 @@ namespace MyForm
         private Button closeButton;
         private Button updateButton;
         private Button saveButton;
+        private Button filterGreenButton;
         private DateTimePicker dateTimePickerStart;
         private DateTimePicker dateTimePickerEnd;
 
@@ -247,8 +248,31 @@ namespace MyForm
             saveButton.Click += new EventHandler(SaveButton_Click);
             Controls.Add(saveButton);
 
-            
+            filterGreenButton = new Button();
+            filterGreenButton.Text = "Show Linked Contacts";
+            filterGreenButton.Location = new System.Drawing.Point(340, 370);
+            filterGreenButton.Size = new System.Drawing.Size(150, 50);
+            filterGreenButton.Click += FilterGreenButton_Click; // Assign the event handler
+            Controls.Add(filterGreenButton);
+
         }
+
+        private void FilterGreenButton_Click(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridViewC.Rows)
+            {
+                // Check the background color of the row
+                if (row.DefaultCellStyle.BackColor != Color.Green)
+                {
+                    // Hide the row if it is not green
+                    CurrencyManager currencyManager = (CurrencyManager)BindingContext[dataGridViewC.DataSource];
+                    currencyManager.SuspendBinding();
+                    row.Visible = false;
+                    currencyManager.ResumeBinding();
+                }
+            }
+        }
+
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
