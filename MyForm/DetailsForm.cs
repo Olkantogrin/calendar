@@ -9,6 +9,8 @@ namespace MyForm
 {
     public partial class DetailsForm : Form
     {
+        private bool isFiltered = false; //???
+
         //private DataGridView dataGridView;
         private AppointmentForm appointmentForm;
         private object id;
@@ -149,6 +151,7 @@ namespace MyForm
 
         private void DataGridViewC_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
+         
 
             ContactDao contactDao = new ContactDao();
 
@@ -249,30 +252,37 @@ namespace MyForm
             Controls.Add(saveButton);
 
             filterGreenButton = new Button();
-            filterGreenButton.Text = "Show Linked Contacts";
+            filterGreenButton.Text = resourceManager.GetString("Show Linked Contacts"); 
             filterGreenButton.Location = new System.Drawing.Point(340, 370);
             filterGreenButton.Size = new System.Drawing.Size(150, 50);
-            filterGreenButton.Click += FilterGreenButton_Click; // Assign the event handler
+            filterGreenButton.Click += FilterGreenButton_Click;
             Controls.Add(filterGreenButton);
 
         }
 
         private void FilterGreenButton_Click(object sender, EventArgs e)
         {
+            CurrencyManager currencyManager = (CurrencyManager)BindingContext[dataGridViewC.DataSource];
+            currencyManager.SuspendBinding();
+
             foreach (DataGridViewRow row in dataGridViewC.Rows)
             {
-                // Check the background color of the row
-                if (row.DefaultCellStyle.BackColor != Color.Green)
+                if (isFiltered)
                 {
-                    // Hide the row if it is not green
-                    CurrencyManager currencyManager = (CurrencyManager)BindingContext[dataGridViewC.DataSource];
-                    currencyManager.SuspendBinding();
-                    row.Visible = false;
-                    currencyManager.ResumeBinding();
+                    row.Visible = true;
+                }
+                else
+                {
+                    if (row.DefaultCellStyle.BackColor != Color.Green)
+                    {
+                        row.Visible = false;
+                    }
                 }
             }
-        }
 
+            currencyManager.ResumeBinding();
+            isFiltered = !isFiltered;  // Toggle the filter status
+        }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {

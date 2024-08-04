@@ -195,4 +195,7 @@
   <data name="Not a valid phone number." xml:space="preserve">
     <value>Keine gültige Telefonnummer.</value>
   </data>
+  <data name="Show Linked Contacts" xml:space="preserve">
+    <value>Zeige verknüpfte Kontakte</value>
+  </data>
 </root>
