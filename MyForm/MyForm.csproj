@@ -116,6 +116,7 @@
       <DependentUpon>ResXFile.en.resx</DependentUpon>
     </Compile>
     <Compile Include="Span.cs" />
+    <Compile Include="writer\Writer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

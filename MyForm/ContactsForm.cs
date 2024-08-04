@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
@@ -9,6 +12,7 @@ namespace MyForm
     public class ContactsForm : Form
     {
         private Button addButton;
+        private Button exportButton;
         private DataGridView dataGridView;
 
         private string loc;
@@ -45,10 +49,39 @@ namespace MyForm
             addButton.Click += DataGridView_AddClick;
             Controls.Add(addButton);
 
+            exportButton = new Button();
+            exportButton.Text = "->";
+            exportButton.Location = new System.Drawing.Point(95, 10);
+            exportButton.Size = new System.Drawing.Size(75, 50);
+            exportButton.Click += DataGridView_ExportClick;
+            Controls.Add(exportButton);
+
             CreateDataGridView();
 
         }
 
+        private void DataGridView_ExportClick(object sender, EventArgs e)
+        {  
+
+            List<Contact> contactsToPrint = new List<Contact>();
+
+            ContactDao contactDao = new ContactDao();
+            System.Data.DataSet ds = contactDao.GetContacts();
+
+            foreach (DataTable table in ds.Tables)
+            {
+                foreach (DataRow row in table.Rows)
+                {
+                    contactsToPrint.Add(new Contact(row["name"].ToString(), row["streetandnumber"].ToString(), row["postalcodeandcity"].ToString(), row["tel"].ToString(), row["mail"].ToString()));
+                }
+            }
+
+
+            writer.Writer wrtr = new writer.Writer();
+
+            wrtr.WriteAllContacts(contactsToPrint);
+
+        }
 
         private void CreateDataGridView()
         {
