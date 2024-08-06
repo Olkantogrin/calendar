@@ -72,7 +72,7 @@ namespace MyForm
 
                         dates.AddRange(newDates);
 
-                        //TODO: Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
+                        //TODO: Soll ich oben bei jedem d als Jahr als das aktuelle Jahr setzen? Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
 
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
@@ -123,7 +123,7 @@ namespace MyForm
 
                         }
 
-                        //TODO: Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
+                        //TODO: Soll ich oben bei jedem d als Jahr als das aktuelle Jahr setzen? Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
 
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
