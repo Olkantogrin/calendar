@@ -126,8 +126,8 @@
   <data name="discard" xml:space="preserve">
     <value>выбросить</value>
   </data>
-  <data name="monthly repetition" xml:space="preserve">
-    <value>ежемесячно</value>
+  <data name="monthly repetition daynumber" xml:space="preserve">
+    <value>ежемесячное но. дня</value>
   </data>
   <data name="my event" xml:space="preserve">
     <value>моё событие</value>

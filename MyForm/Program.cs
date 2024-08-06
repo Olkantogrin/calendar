@@ -386,13 +386,16 @@ namespace MyForm
 
                     if (selectedRepetitionIndex == 1)
                     {
-                        repetitionType = "m"; // Monatliche Wiederholung
+                        repetitionType = "m"; // Monatliche Wiederholung nach Kalenderzahl
                     }
                     else if (selectedRepetitionIndex == 2)
                     {
                         repetitionType = "y"; // Jährliche Wiederholung
                     }
-
+                    else if (selectedRepetitionIndex == 3)
+                    {
+                        repetitionType = "d"; // Monatliche Wiederholung nach Wochentag
+                    }
 
                     Date d = new Date(textStartEnd[0], textStartEnd[1], textStartEnd[2], repetitionType);
 

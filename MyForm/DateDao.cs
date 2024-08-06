@@ -72,7 +72,8 @@ namespace MyForm
 
                         dates.AddRange(newDates);
 
-                      
+                        //TODO: Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
+
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
                     }
@@ -122,6 +123,8 @@ namespace MyForm
 
                         }
 
+                        //TODO: Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
+
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
                         
@@ -146,33 +149,7 @@ namespace MyForm
 
                 if ("y".Equals(d.Repeat))
                 {
-                    CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
-                    DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
-                    DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
-
-                    DateTime updatedDateStart = new DateTime(year, parsedDateStart.Month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
-
-                    TimeSpan difference = parsedDateEnd - parsedDateStart;
-
-                    DateTime updatedDateEnd = updatedDateStart.Add(difference);
-
-                    string updatedStart = updatedDateStart.ToString();
-                    string updatedEnd = updatedDateEnd.ToString();
-
-                    if (updatedStart.Length > 3)
-                    {
-                        updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
-                    }
-
-                    if (updatedEnd.Length > 3)
-                    {
-                        updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
-                    }
-
-                    d.Start = updatedStart;
-                    d.End = updatedEnd;
-
-                    datesresult.Add(d);
+                    GetYearly(year, datesresult, d);
                 }
 
                 else if ("m".Equals(d.Repeat))
@@ -192,7 +169,37 @@ namespace MyForm
             return datesresult;
         }
 
-        
+        private static void GetYearly(int year, List<Date> datesresult, Date d)
+        {
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
+            DateTime parsedDateStart = DateTime.ParseExact(d.Start, "dd.MM.yyyy HH:mm", culture);
+            DateTime parsedDateEnd = DateTime.ParseExact(d.End, "dd.MM.yyyy HH:mm", culture);
+
+            DateTime updatedDateStart = new DateTime(year, parsedDateStart.Month, parsedDateStart.Day, parsedDateStart.Hour, parsedDateStart.Minute, parsedDateStart.Second);
+
+            TimeSpan difference = parsedDateEnd - parsedDateStart;
+
+            DateTime updatedDateEnd = updatedDateStart.Add(difference);
+
+            string updatedStart = updatedDateStart.ToString();
+            string updatedEnd = updatedDateEnd.ToString();
+
+            if (updatedStart.Length > 3)
+            {
+                updatedStart = updatedStart.Substring(0, updatedStart.Length - 3);
+            }
+
+            if (updatedEnd.Length > 3)
+            {
+                updatedEnd = updatedEnd.Substring(0, updatedEnd.Length - 3);
+            }
+
+            d.Start = updatedStart;
+            d.End = updatedEnd;
+
+            datesresult.Add(d);
+        }
+
 
         private void GetMonthly(int month, List<Date> datesresult, Date d)
         {
@@ -422,7 +429,7 @@ namespace MyForm
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
-                    command.Parameters.AddWithValue("@selectedDay", selectedDay);
+                    command.Parameters.AddWithValue("@selectedDay", selectedDay); //TODO: Kann das hier weg?
 
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {

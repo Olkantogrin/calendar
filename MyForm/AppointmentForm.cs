@@ -33,6 +33,8 @@ namespace MyForm
 
         private bool datePickerSelected = false;
 
+        DateDao dateDao;
+
         private CheckBox checkBoxAddToBoldedDates;
         private ComboBox comboBoxRepeat;
         private CheckBox wholeDay;
@@ -163,7 +165,7 @@ namespace MyForm
             // Ereignis für das Befüllen der Zellen registrieren
             dataGridView.RowsAdded += new DataGridViewRowsAddedEventHandler(DataGridView_RowsAdded);
 
-            DateDao dateDao = new DateDao();
+            dateDao = new DateDao();
 
             dataGridView.AllowUserToAddRows = false;
             dataGridView.ReadOnly = isReadOnly;
@@ -203,7 +205,7 @@ namespace MyForm
                     //var start = row.Cells["start"].Value;
                     //var end = row.Cells["end"].Value;
 
-                    DateDao dateDao = new DateDao();
+                    dateDao = new DateDao();
                     dateDao.DeleteEntryById(id);
 
                     checkBoxAddToBoldedDates.Checked = true;
@@ -249,9 +251,9 @@ namespace MyForm
             this.Controls.Add(wholeDayLabel);
 
             comboBoxRepeat.Items.Add(resourceManager.GetString("no repetition") + " n");
-            comboBoxRepeat.Items.Add(resourceManager.GetString("monthly repetition") + " m");
+            comboBoxRepeat.Items.Add(resourceManager.GetString("monthly repetition daynumber") + " m");
             comboBoxRepeat.Items.Add(resourceManager.GetString("yearly repetition") + " y");
-            //comboBox.Items.Add(resourceManager.GetString("weekly repetition") + " w");
+            //comboBoxRepeat.Items.Add("monthly repetition day" + " d");
 
             comboBoxRepeat.SelectedIndex = 0; 
 
