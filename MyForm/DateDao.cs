@@ -50,6 +50,8 @@ namespace MyForm
 
                 string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR((start LIKE '%.{formattedYear}%' OR end LIKE '%.{formattedYear}%') AND repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)";
 
+                //string sql = $"SELECT * FROM dates WHERE((start LIKE '%.{monthYear}%' OR end LIKE '%.{monthYear}%') AND repeat = 'n') OR((start LIKE '%.{formattedMonth}.%') OR(end LIKE '%.{formattedMonth}.%') AND repeat = 'y') OR(repeat = 'm') ORDER BY substr(start, 7, 4) || '-' || substr(start, 4, 2) || '-' || substr(start, 1, 2) || ' ' || substr(start, 12, 5)"; //Nächster Schritt: Wie kann der Serientermin dargestellt werden, und wie kann ich es im Folgejahr ab JAN. darstellen?
+
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -66,6 +68,7 @@ namespace MyForm
                             dates.Add(d);
                         }
 
+
                         CultureInfo culture = CultureInfo.CreateSpecificCulture("de-DE");
                         List<Date> newDates = new List<Date>();
                         
@@ -73,6 +76,8 @@ namespace MyForm
                         dates.AddRange(newDates);
 
                         //TODO: Soll ich oben bei jedem d als Jahr als das aktuelle Jahr setzen? Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
+                        //dates = setCurrentYearInMonthlyRepeatedDates(dates, year); 
+
 
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
@@ -85,7 +90,7 @@ namespace MyForm
             List<DateTime> selectedDates = span.GetSelectedDateTimesByDateList(dates);
             return selectedDates;
         }
-        
+
 
 
 
@@ -124,7 +129,9 @@ namespace MyForm
                         }
 
                         //TODO: Soll ich oben bei jedem d als Jahr als das aktuelle Jahr setzen? Wenn nach Wochentag wiederholt werden soll (repeat = d), hier noch diese zu dates hinzufügen.
-
+                        //dates = setCurrentYearInMonthlyRepeatedDates(dates, year);
+                        
+                        
                         dates = SetCorrectDateForRepeatedDates(dates, month, year);
 
                         
@@ -139,6 +146,87 @@ namespace MyForm
             return selectedDates;
 
         }
+
+
+
+        /*
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //Nächster Schritt: Wie kann der Serientermin dargestellt werden, und wie kann ich es im Folgejahr ab JAN. darstellen?
+        private List<Date> setCurrentYearInMonthlyRepeatedDates(List<Date> dates, int year)
+        {
+            List<Date> newDates = new List<Date>();
+
+         
+            foreach (Date date in dates)
+            {
+                if ("m".Equals(date.Repeat))
+                {
+                    List<string> starts = GetAllMonths(year, date.Start = date.Start.Remove(6, 4).Insert(6, year.ToString()));
+                    List<string> ends = GetAllMonths(year, date.End = date.End.Remove(6, 4).Insert(6, year.ToString()));
+
+                    Date d;
+
+                    for (int i = 0; i < starts.Count; i++) {
+                        d = new Date(date.Text, starts[i], ends[i], date.Repeat);
+                        Console.WriteLine("-------------------------------------------------------");
+                        Console.WriteLine(d.ToString());
+                        newDates.Add(d);
+                         
+                    }
+
+                    
+
+                }
+                else
+                {
+                    newDates.Add(date);
+                }
+            }
+
+            return newDates;
+
+        }
+
+        
+        private static List<string> GetAllMonths(int year, string StartOrEnd)
+        {
+            
+            List<string> StartsEnds = new List<string>();
+
+            string dateString = StartOrEnd;
+
+            string[] dateParts = dateString.Split(' ');
+
+            // Datumsteil aufteilen (z. B. "02.08.2024" und "12:00")
+            string datePart = dateParts[0];
+            string timePart = dateParts[1];
+
+            // Monat und Jahr extrahieren
+            int day = int.Parse(datePart.Substring(0, 2));
+            int month = int.Parse(datePart.Substring(3, 2));
+            int yr = int.Parse(datePart.Substring(6, 4));
+
+            // Enddatum (hier: 02.12.2024 12:00)
+            int endMonth = 12;
+            int endYear = year;
+
+            // Schleife, die alle Monate zwischen Start- und Enddatum durchläuft
+            while (yr < endYear || (yr == endYear && month <= endMonth))
+            {
+                StartsEnds.Add($"{day:D2}.{month:D2}.{yr} {timePart}");
+                month++;
+                if (month > 12)
+                {
+                    month = 1;
+                    yr++;
+                }
+            } return StartsEnds;
+        }
+        
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        */
 
         private List<Date> SetCorrectDateForRepeatedDates(List<Date> dates, int month, int year)
         {
