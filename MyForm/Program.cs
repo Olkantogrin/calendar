@@ -143,7 +143,6 @@ namespace MyForm
         }
 
         private void ReStartScheduler() {
-            schedulerThread.Abort();
             StartScheduler();
         }
 
