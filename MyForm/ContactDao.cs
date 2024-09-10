@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Text.RegularExpressions;
@@ -25,11 +26,11 @@ namespace MyForm
 
                 using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                 {
-                 
+
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         DataTable dataTable = new DataTable();
-                        dataTable.Load(reader); 
+                        dataTable.Load(reader);
 
                         dataSet.Tables.Add(dataTable);
                     }
@@ -38,36 +39,18 @@ namespace MyForm
                 connection.Close();
             }
 
-                return dataSet;
+            return dataSet;
         }
 
         public string GetEntryForEmptyString()
         {
-            string id = "";
-
-            string connectionString = "Data Source=cal.db;Version=3;";
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            using (var connection = new SQLiteConnection("Data Source=cal.db;Version=3;"))
             {
                 connection.Open();
-
                 string sql = $"SELECT id FROM contacts WHERE name = ' '";
-
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            id = reader["id"].ToString();
-                        }
-                    }
-                }
-                connection.Close();
+                return connection.ExecuteScalar<string>(sql);
             }
-
-            return id;
         }
-
         public string[] GetEntryForId(string id)
         {
             string[] contact = new string[5];
@@ -103,86 +86,46 @@ namespace MyForm
             return contact;
         }
 
-        
-            public void SaveContact(Contact contact)
+
+        public void SaveContact(Contact contact)
+        {
+            string connectionString = "Data Source=cal.db;Version=3;";
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
-                string connectionString = "Data Source=cal.db;Version=3;";
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
+                connection.Open();
 
                 string contactName = contact.Text;
 
-                string pattern = @"^\s+$";
-                
-                bool isWhitespaceOnly = Regex.IsMatch(contactName, pattern);
+                bool isWhitespaceOnly = Regex.IsMatch(contactName, @"^\s+$");
 
-                if (!isWhitespaceOnly) { 
-
-                string sql = "INSERT INTO contacts (name, streetandnumber, postalcodeandcity, mail, tel) VALUES (@text, @streetAndNumber, @postalCodeAndCity, @tel, @mail)";   
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
-                    {
-                    command.Parameters.AddWithValue("@text", contactName);
-                    command.Parameters.AddWithValue("@streetAndNumber", contact.ContactStreetAndNumber);
-                    command.Parameters.AddWithValue("@postalCodeAndCity", contact.ContactPostalCodeAndCity);
-                    command.Parameters.AddWithValue("@tel", contact.ContactTel);
-                    command.Parameters.AddWithValue("@mail", contact.ContactMail);
-
-
-
-                    command.ExecuteNonQuery();
-                    }
-                    connection.Close();
-                }
-            }
-        }
-
-        public bool GetLinkedContact(string dateID, string contactID)
-        {
-
-            bool boolValue = false;
-            string connectionString = "Data Source=cal.db;Version=3;";
-            string iscouple = "0";
-
-            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-            {
-
-
-                connection.Open();
-
-                string sql = $"SELECT isCouple FROM couples WHERE id_date = '{dateID}' AND id_contact = '{contactID}' AND iscouple = '1'";
-
-                using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+                if (!isWhitespaceOnly)
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    string sql = $"INSERT INTO contacts (name, streetandnumber, postalcodeandcity, tel, mail) VALUES (@text, @streetAndNumber, @postalCodeAndCity, @tel, @mail)";
+                    using (SQLiteCommand command = new SQLiteCommand(sql, connection))
                     {
-                        while (reader.Read())
-                        {
-                            iscouple = reader["iscouple"].ToString();
+                        command.Parameters.AddWithValue("@text", contactName);
+                        command.Parameters.AddWithValue("@streetAndNumber", contact.ContactStreetAndNumber);
+                        command.Parameters.AddWithValue("@postalCodeAndCity", contact.ContactPostalCodeAndCity);
+                        command.Parameters.AddWithValue("@tel", contact.ContactTel);
+                        command.Parameters.AddWithValue("@mail", contact.ContactMail);
 
-                        }
-
-
-
+                        command.ExecuteNonQuery();
                     }
                 }
+
                 connection.Close();
             }
-
-
-            if (iscouple.Equals("1"))
-            {
-                boolValue = true;
-            }
-            else if (iscouple.Equals("0"))
-            {
-                boolValue = false;
-            }
-
-            return boolValue;
-
         }
+        public bool GetLinkedContact(string dateID, string contactID)
+        {
+            using (var connection = new SQLiteConnection("Data Source=cal.db;Version=3;"))
+            {
+                connection.Open();
+                string sql = $"SELECT isCouple FROM couples WHERE id_date = '{dateID}' AND id_contact = '{contactID}' AND iscouple = '1'";
 
+                return connection.ExecuteScalar<int>(sql) == 1; // Conditional operator
+            }
+        }
         public void ToggleCouple(string dateID, string contactID)
         {
 

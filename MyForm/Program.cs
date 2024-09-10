@@ -10,13 +10,16 @@ namespace MyForm
 {
     public class Form1 : Form
     {
+        ResourceManager resourceManager;
+
         private MonthCalendar monthCalendar;
         private Font boldDateFont;
         private DateTime selectedDate;
+        private DateTime previousDate;
+
         private AppointmentForm appointmentForm;
         private ContactsForm contactForm;
-        private DateTime previousDate;
-        
+
         private ComboBox dropdownList;
         private string locale = "de-DE";
 
@@ -24,94 +27,68 @@ namespace MyForm
 
         private Thread schedulerThread;
 
+        private DateDao dateDao;
+
         public Form1()
         {
-
             FormBorderStyle = FormBorderStyle.FixedDialog;
 
-            // Initialisierung des MonthCalendar
+            // MonthCalendar initialization
             monthCalendar = new MonthCalendar
             {
                 CalendarDimensions = new Size(1, 1),
                 Location = new Point(10, 10)
             };
-
             DrawCalendarForFreshMonth(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
-
             prepareMonthCalendar();
-
             Controls.Add(monthCalendar);
 
-
-            StartScheduler();
-
-            // Initialisierung der Dropdown-Liste
+            // Dropdown list initialization
             dropdownList = new ComboBox
             {
-                Location = new Point(10, 200), // Ändere die Position entsprechend deiner Anforderungen
-                Width = 150 // Ändere die Breite entsprechend deiner Anforderungen
+                Location = new Point(10, 200),
+                Width = 150
             };
-
-            // Füge die Werte zur Dropdown-Liste hinzu
             dropdownList.Items.AddRange(new string[] { "English", "Deutsch", "русский" });
-
-            // Hinzufügen der Event-Handler für die Dropdown-Liste
             dropdownList.SelectedIndexChanged += DropdownList_SelectedIndexChanged;
-
-            // Hinzufügen des MonthCalendar zur Form
-            Controls.Add(monthCalendar);
-
-            // Hinzufügen der Dropdown-Liste zur Form
             Controls.Add(dropdownList);
 
-        
-            DateDao dateDao = new DateDao();
-
-            ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
+            // Localization
+            dateDao = new DateDao();
+            resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
             string loc = dateDao.GetLocale();
             CultureInfo ci = new CultureInfo(loc);
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
-            
-            Button readerButtonICS = new Button
-            {
-                Text = resourceManager.GetString("read ics"),
-                Location = new System.Drawing.Point(170, 200),
-                Size = new System.Drawing.Size(100, 25)
-            };
 
-            // Füge den Button zur Form hinzu
-            this.Controls.Add(readerButtonICS);
+            // Buttons
+            var readerButtonIcs = CreateButton("read ics", new Point(170, 200), new Size(100, 25));
+            readerButtonIcs.Click += ReadButton_ClickICS;
+            Controls.Add(readerButtonIcs);
 
-            // Registriere das Click-Ereignis
-            readerButtonICS.Click += ReadButton_ClickICS;
-
-            Button contactsButton = new Button
-            {
-                Text = resourceManager.GetString("contacts"),
-                Location = new System.Drawing.Point(170, 174),
-                Size = new System.Drawing.Size(100, 25)
-            };
-
-            this.Controls.Add(contactsButton);
-
+            var contactsButton = CreateButton("contacts", new Point(170, 174), new Size(100, 25));
             contactsButton.Click += ContactButton_Click;
+            Controls.Add(contactsButton);
+        }
 
+        private Button CreateButton(string textResourceId, Point location, Size size)
+        {
+            var button = new Button
+            {
+                Text = resourceManager.GetString(textResourceId),
+                Location = location,
+                Size = size
+            };
+            return button;
         }
 
         private void ContactButton_Click(object sender, EventArgs e)
         {
             if (contactForm == null || contactForm.IsDisposed)
             {
-
-                DateDao dateDao = new DateDao();
-
-                string loc = dateDao.GetLocale();
-
-                contactForm = new ContactsForm(loc);
-                if (appointmentForm != null) { appointmentForm.Close(); } 
+                contactForm = new ContactsForm(dateDao?.GetLocale()); // Use null-conditional operator
+                if (appointmentForm != null) { appointmentForm.Close(); }
                 contactForm.Show();
-
             }
             else
             {
@@ -169,50 +146,32 @@ namespace MyForm
             schedulerThread.Abort();
             StartScheduler();
         }
-        
+
 
         private void StartScheduler()
         {
             bool isSchedulerRunning = true;
             schedulerThread = new Thread(() =>
             {
-                Thread.Sleep(60000);
-
-                DateDao dateDao = new DateDao();
-
-                ResourceManager resourceManager = new ResourceManager("MyForm.Resources.ResXFile", typeof(AppointmentForm).Assembly);
-                string loc = dateDao.GetLocale();
-                CultureInfo ci = new CultureInfo(loc);
-                Thread.CurrentThread.CurrentCulture = ci;
-                Thread.CurrentThread.CurrentUICulture = ci;
-                
-
-                Dictionary<Date, List<DateTime>> selectedDates = dateDao.GetSelectedTextDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
-
                 while (isSchedulerRunning)
                 {
-                    foreach (KeyValuePair<Date, List<DateTime>> entry in selectedDates)
+                    DateTime now = DateTime.Now;
+                    Dictionary<Date, List<DateTime>> selectedDatesByDay = dateDao.GetSelectedTextDatesForMonthAndYear(monthCalendar.SelectionStart.Month, monthCalendar.SelectionStart.Year);
+
+                    foreach (KeyValuePair<Date, List<DateTime>> entry in selectedDatesByDay)
                     {
                         foreach (DateTime dateTime in entry.Value)
                         {
-
-                            //DateTime tenMinutesAhead = DateTime.Now.AddMinutes(10);
-                            DateTime zeroMinutesAhead = DateTime.Now;
-
-                            bool alert = (zeroMinutesAhead - dateTime).Duration() <= TimeSpan.FromMinutes(10);
-                            //bool alert = (dateTime >= zeroMinutesAhead && dateTime <= tenMinutesAhead);
-
+                            bool alert = Math.Abs((dateTime - now).TotalMinutes) <= 10;
                             if (alert)
-                            {  
+                            {
                                 MessageBox.Show($"{entry.Key.Text} " + resourceManager.GetString("starts within 10 minutes"));
                             }
                         }
                     }
-                    
-                    Thread.Sleep(20000);
-                    //Thread.Sleep(60000); // Warte eine Minute, bevor die nächste Überprüfung erfolgt
+
+                    Thread.Sleep(20000); // Wait 20 seconds before the next check
                 }
-                
             });
             schedulerThread.IsBackground = true;
             schedulerThread.Start();
@@ -220,7 +179,7 @@ namespace MyForm
 
         private void DropdownList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DateDao dateDao = new DateDao();
+            dateDao = new DateDao();
 
             if (dropdownList.SelectedIndex == 0)
            {
@@ -276,7 +235,7 @@ namespace MyForm
         private void DrawCalendarForFreshMonth(int month, int year)
         {
             
-            DateDao dateDao = new DateDao();
+            dateDao = new DateDao();
 
             List<DateTime> selectedDates = dateDao.GetSelectedDatesForMonthAndYear(month, year);
              
@@ -295,7 +254,7 @@ namespace MyForm
         { 
             if (appointmentForm == null || appointmentForm.IsDisposed)
             {
-                DateDao dateDao = new DateDao();
+                dateDao = new DateDao();
 
                 string loc = dateDao.GetLocale();
 
@@ -412,7 +371,7 @@ namespace MyForm
                     }
                     monthCalendar.UpdateBoldedDates();
                     
-                    DateDao dateDao = new DateDao();
+                    dateDao = new DateDao();
                     dateDao.SaveAppointment(d);
                 
                 }
